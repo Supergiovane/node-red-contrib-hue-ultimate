@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 224 224" width="224" height="224" role="img" aria-labelledby="title"><title id="title">HUE Ultimate</title><defs>
+ <linearGradient id="background" x2="1" y2="1"><stop stop-color="#142C43"/><stop offset="1" stop-color="#091522"/></linearGradient>
+ <radialGradient id="aura"><stop stop-color="#F4C563" stop-opacity=".12"/><stop offset="1" stop-color="#F4C563" stop-opacity="0"/></radialGradient>
+ <linearGradient id="light" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#F9DE85"/><stop offset=".52" stop-color="#F6AE62"/><stop offset="1" stop-color="#E284AB"/></linearGradient>
+ </defs><rect width="224" height="224" rx="44" fill="url(#background)"/><g transform="translate(12 10)"><path d="M28 89 100 27l72 62v87H28Z" fill="#102337" stroke="#F4C563" stroke-width="9" stroke-linejoin="round"/><path d="M80 130c0-12-15-16-15-36a35 35 0 0 1 70 0c0 20-15 24-15 36" fill="url(#light)"/>
+  <path d="M83 137h34m-29 12h24" stroke="#FBE9BB" stroke-width="7" stroke-linecap="round"/>
+  <path d="M100 76v37m-14-25 14 14 14-14" fill="none" stroke="#102337" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></g></svg>

@@ -1,0 +1,42 @@
+<script type="text/markdown" data-help-name="hue-ultimate-config">
+## Documentation
+
+The nodes work directly with Node-RED messages: `msg.topic` identifies the function and `msg.payload` carries its value. KNX Ultimate is not required.
+
+Create the configuration from the Controller’s Hue Bridge selector. Discover the bridge or enter its IP, click **CONNECT**, then press the physical button on the bridge. Save and Deploy. You can reuse existing bridge credentials instead of pairing again. Several Controllers can share the same bridge.
+
+Enable the input/output pins and enter topic names in the command and state fields. Leave the KNX gateway empty; DPT fields are hidden because they are not needed. Use separate command and state topics. Matching is exact; wildcards are not supported.
+
+### KNX mode
+
+**You can also use this package with KNX Ultimate.** The integration is native: install `node-red-contrib-knx-ultimate` and select its gateway to enable **KNX mode**. The same mapping fields then use group addresses and DPTs, with suggestions from the imported ETS project. Commands and feedback pass directly over the bus; no intermediate Function node is needed for these mappings.
+
+When selecting a gateway, replace the saved topics with real group addresses and choose the correct DPTs. A selected gateway that is offline leaves the node in KNX mode. To return to Node-RED messages, clear the gateway and configure the topics again.
+
+[Nodes](https://supergiovane.github.io/node-red-contrib-hue-ultimate/en/nodes.html) · [Examples](https://supergiovane.github.io/node-red-contrib-hue-ultimate/en/examples.html)
+
+
+---
+
+<H1><p align='center'>PHILIPS Hue NODES</p></H1>
+<br/>
+<p align='center'> <img src='https://raw.githubusercontent.com/Supergiovane/node-red-contrib-knx-ultimate/master/img/huehub.jpg' width='40%'></p>
+
+This node registers Node-RED with the Hue Bridge and now handles the pairing handshake automatically.
+
+Enter the bridge IP (or pick one from the discovery list) and click **CONNECT**. The editor will keep polling the bridge and closes the waiting dialog as soon as you press the physical link button. Use **CANCEL** if you need to abort the pairing and try again later. The Username and Client Key fields stay editable so you can copy or paste credentials at any time.
+
+Already have credentials? Click **I ALREADY HAVE THE CREDENTIALS** to immediately show the fields and enter them manually without waiting for the bridge button.
+
+**General**
+
+|Property|Description|
+|--|--|
+| IP | Enter the fixed IP of your Hue Bridge or choose one of the discovered bridges from the list. |
+| CONNECT | Starts the registration and waits for the bridge link button. The dialog closes automatically once the button is pressed; use **CANCEL** to stop waiting. |
+| Name | Bridge name that is read back from the Hue Bridge after a successful connection. |
+| Username | Username returned by the Hue Bridge after pairing. It remains editable so you can copy or paste the value manually if needed. |
+| Client Key | Client Key returned by the Hue Bridge after pairing. It remains editable so you can copy or paste the value manually if needed. |
+
+![image.png](../img/hude-config.png)
+</script>

@@ -1,0 +1,44 @@
+<script type="text/markdown" data-help-name="hue-ultimate-config">
+## Dokumentation
+
+Die Nodes arbeiten direkt mit Node-RED-Nachrichten: `msg.topic` bezeichnet die Funktion, `msg.payload` enthält den Wert. KNX Ultimate wird dafür nicht benötigt.
+
+Erstelle die Konfiguration im Hue-Bridge-Auswahlfeld des Controllers. Suche die Bridge oder gib ihre IP ein, klicke **CONNECT** und drücke die Taste auf der Bridge. Speichere und führe Deploy aus. Vorhandene Zugangsdaten können wiederverwendet werden. Mehrere Controller können dieselbe Bridge nutzen.
+
+Aktiviere die Ein-/Ausgänge und trage Topic-Namen in die Befehls- und Statusfelder ein. Lass das KNX-Gateway leer; DPT-Felder bleiben ausgeblendet, da sie nicht benötigt werden. Verwende unterschiedliche Topics für Befehle und Status. Die Namen müssen exakt übereinstimmen; Platzhalter werden nicht unterstützt.
+
+### KNX-Modus
+
+**Du kannst das Paket auch mit KNX Ultimate verwenden.** Die Integration ist nativ: Installiere `node-red-contrib-knx-ultimate` und wähle dessen Gateway, um den **KNX-Modus** zu aktivieren. Dieselben Zuordnungsfelder verwenden dann Gruppenadressen und DPTs mit Vorschlägen aus dem importierten ETS-Projekt. Befehle und Status werden direkt über den Bus übertragen; dafür sind keine zusätzlichen Function-Nodes nötig.
+
+Ersetze beim Auswählen eines Gateways die gespeicherten Topics durch echte Gruppenadressen und wähle die passenden DPTs. Ist das ausgewählte Gateway offline, bleibt der Node im KNX-Modus. Entferne die Gateway-Auswahl und konfiguriere die Topics erneut, um wieder Node-RED-Nachrichten zu verwenden.
+
+[Nodes](https://supergiovane.github.io/node-red-contrib-hue-ultimate/de/nodes.html) · [Beispiele](https://supergiovane.github.io/node-red-contrib-hue-ultimate/de/examples.html)
+
+
+---
+
+<h1><p align='center'>PHILIPS HUE NODES</p></h1>
+<br/>
+<p align='center'>
+  <img src='https://raw.githubusercontent.com/Supergiovane/node-red-contrib-knx-ultimate/master/img/huehub.jpg' width='40%'>
+</p>
+
+Dieser Node registriert Node-RED an der Hue Bridge und führt den Kopplungsvorgang jetzt automatisch aus.
+
+Gib die IP des Bridge ein (oder wähle eine automatisch erkannte Bridge) und klicke auf **CONNECT**. Der Editor fragt die Bridge weiter an und schließt den Warte-Dialog automatisch, sobald du die physische Link-Taste gedrückt hast. Mit **CANCEL** kannst du den Vorgang jederzeit stoppen und später erneut versuchen. Die Felder für Benutzername und Client Key bleiben bearbeitbar, damit du die Zugangsdaten jederzeit kopieren oder manuell einfügen kannst.
+
+Du hast die Zugangsdaten bereits? Klicke auf **ICH HABE BEREITS DIE ZUGANGSDATEN**, um die Felder sofort einzublenden und sie manuell einzugeben, ohne auf den Bridge-Button zu warten.
+
+**Allgemein**
+
+| Eigenschaft | Beschreibung |
+|--|--|
+| IP | Gib die feste IP deiner Hue Bridge ein oder wähle einen automatisch gefundenen Eintrag aus der Liste. |
+| VERBINDEN | Startet die Registrierung und wartet auf den Tastendruck an der Bridge. Der Dialog schließt sich automatisch nach dem Tastendruck; mit **CANCEL** kannst du das Warten beenden. |
+| Name | Name der Bridge, der nach erfolgreicher Verbindung von der Hue Bridge gelesen wird. |
+| Benutzername | Von der Hue Bridge nach der Kopplung zurückgegebener Benutzername. Das Feld bleibt editierbar für Copy & Paste oder manuelle Eingaben. |
+| Client-Schlüssel | Von der Hue Bridge nach der Kopplung zurückgegebener Client-Schlüssel. Das Feld bleibt editierbar für Copy & Paste oder manuelle Eingaben. |
+
+![image.png](../img/hude-config.png)
+</script>

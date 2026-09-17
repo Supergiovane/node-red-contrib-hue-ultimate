@@ -1,0 +1,42 @@
+<script type="text/markdown" data-help-name="hue-ultimate-config">
+## Documentation
+
+Les nœuds fonctionnent directement avec les messages Node-RED : `msg.topic` identifie la fonction et `msg.payload` contient sa valeur. KNX Ultimate n’est pas nécessaire.
+
+Créez la configuration depuis le sélecteur Hue Bridge du Controller. Recherchez le bridge ou saisissez son IP, cliquez sur **CONNECT**, puis appuyez sur le bouton physique du bridge. Enregistrez et faites Deploy. Vous pouvez réutiliser les identifiants existants. Plusieurs Controllers peuvent partager le même bridge.
+
+Activez les entrées/sorties et saisissez les noms des topics dans les champs de commande et d’état. Laissez la passerelle KNX vide ; les champs DPT sont masqués car ils ne sont pas nécessaires. Utilisez des topics distincts pour les commandes et les états. La correspondance doit être exacte, sans caractères génériques.
+
+### Mode KNX
+
+**Vous pouvez aussi utiliser ce package avec KNX Ultimate.** L’intégration est native : installez `node-red-contrib-knx-ultimate` et sélectionnez sa passerelle pour activer le **Mode KNX**. Les mêmes champs utilisent alors des adresses de groupe et des DPT, avec des suggestions du projet ETS importé. Commandes et états passent directement par le bus ; aucun nœud Function intermédiaire n’est nécessaire pour ces correspondances.
+
+En sélectionnant une passerelle, remplacez les topics enregistrés par de vraies adresses de groupe et choisissez les DPT appropriés. Une passerelle sélectionnée mais hors ligne laisse le nœud en Mode KNX. Pour revenir aux messages Node-RED, retirez la passerelle et configurez à nouveau les topics.
+
+[Nœuds](https://supergiovane.github.io/node-red-contrib-hue-ultimate/fr/nodes.html) · [Exemples](https://supergiovane.github.io/node-red-contrib-hue-ultimate/fr/examples.html)
+
+
+---
+
+<h1> <p align = 'Center'> NODES DE CHEUS PHILIPS </p> </h1>
+<br/>
+<p align = 'Center'> <img src = 'https://raw.githubusercontent.com/supergiovane/node-red-contrib-knx-ultimate/master/img/huehub.jpg' width = '40% '> </p>
+
+Ce nœud enregistre Node-RED auprès du pont Hue et gère désormais automatiquement la procédure d'appairage.
+
+Saisissez l'adresse IP du pont (ou sélectionnez l'un des ponts découverts automatiquement) puis cliquez sur **CONNECT**. L'éditeur interroge la passerelle en continu et ferme la fenêtre d'attente dès que vous appuyez sur le bouton physique de liaison. Utilisez **CANCEL** pour annuler l'attente et réessayer plus tard. Les champs Nom d'utilisateur et Client Key restent modifiables afin de pouvoir copier ou coller les identifiants quand vous le souhaitez.
+
+Vous avez déjà les identifiants ? Cliquez sur **JE POSSÈDE DÉJÀ LES IDENTIFIANTS** pour afficher immédiatement les champs et les saisir manuellement sans attendre le bouton du pont.
+
+**Général**
+
+| Propriété | Description |
+|-|-|
+| IP | Indiquez l'adresse IP fixe de votre pont Hue ou choisissez un pont détecté automatiquement. |
+| CONNECTER | Lance l'enregistrement et attend l'appui sur le bouton de liaison du pont. La boîte de dialogue se ferme automatiquement après l'appui ; utilisez **CANCEL** pour arrêter l'attente. |
+| Nom | Nom du pont lu sur le Hue Bridge après une connexion réussie. |
+| Nom d'utilisateur | Nom d'utilisateur renvoyé par le Hue Bridge après l'appairage. Le champ reste modifiable pour faciliter le copier/coller ou la saisie manuelle. |
+| Clé client | Clé client renvoyée par le Hue Bridge après l'appairage. Le champ reste modifiable pour faciliter le copier/coller ou la saisie manuelle. |
+
+![image.png](../ img / hude-config.png)
+</script>

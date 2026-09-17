@@ -1,0 +1,19 @@
+{
+  "hue-config": "hue-ultimate-config",
+  "knxUltimateHueController": "hueUltimateController",
+  "knxUltimateHueLight": "hueUltimateController",
+  "knxUltimateHuePlug": "hueUltimateController",
+  "knxUltimateHueButton": "hueUltimateController",
+  "knxUltimateHueTapDial": "hueUltimateController",
+  "knxUltimateHueMotion": "hueUltimateController",
+  "knxUltimateHueAreaMotion": "hueUltimateController",
+  "knxUltimateHueCameraMotion": "hueUltimateController",
+  "knxUltimateHueContactSensor": "hueUltimateController",
+  "knxUltimateHueLightSensor": "hueUltimateController",
+  "knxUltimateHueTemperatureSensor": "hueUltimateController",
+  "knxUltimateHueHumiditySensor": "hueUltimateController",
+  "knxUltimateHueScene": "hueUltimateController",
+  "knxUltimateHueBattery": "hueUltimateController",
+  "knxUltimateHueZigbeeConnectivity": "hueUltimateController",
+  "knxUltimateHuedevice_software_update": "hueUltimateController"
+}

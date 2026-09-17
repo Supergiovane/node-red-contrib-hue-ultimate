@@ -1,0 +1,44 @@
+<script type="text/markdown" data-help-name="hue-ultimate-config">
+## 文档
+
+节点直接使用 Node-RED 消息：`msg.topic` 标识功能，`msg.payload` 提供数值。无需安装 KNX Ultimate。
+
+在 Controller 的 Hue Bridge 选择框中创建配置。发现桥接器或输入 IP，点击 **CONNECT**，再按桥接器的实体按钮。保存并部署。也可以复用已有凭据，无需重新配对。多个 Controller 可以共用同一桥接器。
+
+启用输入/输出端口，在命令和状态字段中填写 topic 名称。将 KNX 网关留空；此时不需要 DPT，因此相应字段会隐藏。命令和状态应使用不同的 topic。名称必须精确匹配，不支持通配符。
+
+### KNX 模式
+
+**本包也可以与 KNX Ultimate 配合使用。** 集成为原生功能：安装 `node-red-contrib-knx-ultimate` 并选择其网关，即可启用 **KNX 模式**。同一组映射字段将使用组地址和 DPT，并提供已导入 ETS 项目的地址建议。命令和状态直接通过总线传输，这些映射无需额外的 Function 节点。
+
+选择网关时，请将已保存的 topic 替换为实际组地址，并选择正确的 DPT。已选择的网关离线时，节点仍保持 KNX 模式。要恢复使用 Node-RED 消息，请清空网关并重新配置 topic。
+
+[节点](https://supergiovane.github.io/node-red-contrib-hue-ultimate/zh-CN/nodes.html) · [示例](https://supergiovane.github.io/node-red-contrib-hue-ultimate/zh-CN/examples.html)
+
+
+---
+
+<h1><p align='center'>PHILIPS HUE NODES</p></h1>
+<br/>
+<p align='center'>
+  <img src='https://raw.githubusercontent.com/Supergiovane/node-red-contrib-knx-ultimate/master/img/huehub.jpg' width='40%'>
+</p>
+
+该节点负责将 Node-RED 注册到 Hue 网桥，并且现在会自动处理整个配对流程。
+
+输入网桥的 IP（或从自动发现列表中选择一台）后点击 **CONNECT**。编辑器会持续轮询网桥，一旦按下实体配对按钮就会自动关闭等待窗口。如需取消等待并稍后再试，请点击 **CANCEL**。用户名和客户端密钥字段始终可编辑，方便在任何时候复制或粘贴凭据。
+
+已经有凭据？点击 **我已有凭据**，即可立即显示这些字段并手动输入，无需等待网桥按钮。
+
+**常规**
+
+|属性|说明|
+|--|--|
+| IP | 输入 Hue 网桥的固定 IP，或从自动发现的列表中直接选择。|
+| 连接 | 启动注册并等待网桥的配对按钮。按下按钮后对话框会自动关闭；使用 **CANCEL** 可以终止等待。|
+| Name | 注册成功后从 Hue 网桥读取的名称。|
+| 用户名 | Hue 网桥在配对完成后返回的用户名。字段保持可编辑，便于复制、粘贴或手动输入。|
+| 客户端密钥 | Hue 网桥在配对完成后返回的客户端密钥。字段保持可编辑，便于复制、粘贴或手动输入。|
+
+![image.png](../img/hude-config.png)
+</script>

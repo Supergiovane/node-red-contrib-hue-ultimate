@@ -1,0 +1,533 @@
+{
+  "sections": [
+    {
+      "key": "overview",
+      "labels": {
+        "en": "Overview",
+        "it": "Panoramica",
+        "de": "Übersicht",
+        "zh": "概览"
+      },
+      "items": [
+        {
+          "type": "page",
+          "labels": {
+            "en": "Changelog",
+            "it": "Changelog",
+            "de": "Changelog",
+            "zh": "Changelog"
+          },
+          "page": "Changelog"
+        },
+        {
+          "type": "page",
+          "labels": {
+            "en": "FAQ",
+            "it": "FAQ",
+            "de": "FAQ",
+            "zh": "常见问题"
+          },
+          "page": "FAQ-Troubleshoot"
+        },
+        {
+          "type": "page",
+          "labels": {
+            "en": "Security",
+            "it": "Sicurezza",
+            "de": "Sicherheit",
+            "zh": "安全"
+          },
+          "page": "SECURITY"
+        },
+        {
+          "type": "page",
+          "labels": {
+            "en": "Cerebrum Ultimate",
+            "it": "Cerebrum Ultimate",
+            "de": "Cerebrum Ultimate",
+            "fr": "Cerebrum Ultimate",
+            "es": "Cerebrum Ultimate",
+            "zh": "Cerebrum Ultimate"
+          },
+          "page": "Cerebrum-Ultimate"
+        }
+      ]
+    },
+    {
+      "key": "knxMain",
+      "labels": {
+        "en": "KNX Device",
+        "it": "Nodo KNX Dispositivo",
+        "de": "KNX Geräteknoten",
+        "zh": "KNX 设备"
+      },
+      "items": [
+        {
+          "type": "page",
+          "labels": {
+            "en": "Gateway",
+            "it": "Gateway",
+            "de": "Gateway",
+            "zh": "网关"
+          },
+          "page": "Gateway-configuration"
+        },
+        {
+          "type": "page",
+          "labels": {
+            "en": "Device",
+            "it": "Dispositivo",
+            "de": "Gerät",
+            "zh": "设备"
+          },
+          "page": "Device"
+        },
+        {
+          "type": "page",
+          "labels": {
+            "en": "Protections",
+            "it": "Protezioni",
+            "de": "Knotenschutz",
+            "zh": "节点保护"
+          },
+          "page": "Protections"
+        }
+      ]
+    },
+    {
+      "key": "knxOther",
+      "labels": {
+        "en": "Other KNX Nodes",
+        "it": "Altri Nodi KNX",
+        "de": "Weitere KNX-Knoten",
+        "zh": "其他 KNX 节点"
+      },
+      "items": [
+        {
+          "type": "page",
+          "labels": {
+            "en": "KNX Utility",
+            "it": "KNX Utility",
+            "de": "KNX Utility",
+            "fr": "KNX Utility",
+            "es": "KNX Utility",
+            "zh": "KNX Utility"
+          },
+          "page": "KNX-Utility"
+        },
+        {
+          "type": "page",
+          "labels": {
+            "en": "Viewer",
+            "it": "Viewer",
+            "de": "Viewer",
+            "zh": "查看器"
+          },
+          "page": "knxUltimateViewer"
+        },
+        {
+          "type": "page",
+          "labels": {
+            "en": "KNX Multi Routing",
+            "it": "KNX Multi Routing",
+            "de": "KNX Multi Routing",
+            "fr": "KNX Multi Routing",
+            "es": "KNX Multi Routing",
+            "zh": "KNX 多路由"
+          },
+          "page": "KNX Multi Routing"
+        },
+        {
+          "type": "page",
+          "labels": {
+            "en": "KNX Router Filter",
+            "it": "KNX Router Filter",
+            "de": "KNX Router Filter",
+            "fr": "KNX Router Filter",
+            "es": "KNX Router Filter",
+            "zh": "KNX 路由过滤器"
+          },
+          "page": "KNX Router Filter"
+        },
+        {
+          "type": "page",
+          "labels": {
+            "en": "IoT Bridge",
+            "it": "IoT Bridge",
+            "de": "IoT Bridge",
+            "zh": "物联网桥接"
+          },
+          "page": "IoT-Bridge-Configuration"
+        }
+      ]
+    },
+    {
+      "key": "hue",
+      "labels": {
+        "en": "HUE",
+        "it": "HUE",
+        "de": "HUE",
+        "zh": "HUE"
+      },
+      "items": [
+        {
+          "type": "page",
+          "labels": {
+            "en": "Bridge",
+            "it": "Bridge",
+            "de": "Bridge",
+            "zh": "Bridge"
+          },
+          "page": "HUE Bridge configuration"
+        },
+        {
+          "type": "page",
+          "labels": {
+            "en": "HUE Controller",
+            "it": "HUE Controller",
+            "de": "HUE Controller",
+            "fr": "HUE Controller",
+            "es": "HUE Controller",
+            "zh": "HUE Controller"
+          },
+          "page": "HUE Controller"
+        }
+      ]
+    },
+    {
+      "key": "matter",
+      "labels": {
+        "en": "Matter",
+        "it": "Matter",
+        "de": "Matter",
+        "fr": "Matter",
+        "es": "Matter",
+        "zh": "Matter"
+      },
+      "items": [
+        {
+          "type": "page",
+          "labels": {
+            "en": "Matter Controller",
+            "it": "Controller Matter",
+            "de": "Matter Controller",
+            "fr": "Contrôleur Matter",
+            "es": "Controlador Matter",
+            "zh": "Matter 控制器"
+          },
+          "page": "Matter-Controller-Configuration"
+        },
+        {
+          "type": "page",
+          "labels": {
+            "en": "Control Matter from KNX (BETA)",
+            "it": "Control Matter from KNX (BETA)",
+            "de": "Control Matter from KNX (BETA)",
+            "fr": "Control Matter from KNX (BETA)",
+            "es": "Control Matter from KNX (BETA)",
+            "zh": "从 KNX 控制 Matter (BETA)"
+          },
+          "page": "Control Matter from KNX"
+        },
+        {
+          "type": "page",
+          "labels": {
+            "en": "Matter Bridge (BETA)",
+            "it": "Bridge Matter (BETA)",
+            "de": "Matter Bridge (BETA)",
+            "fr": "Bridge Matter (BETA)",
+            "es": "Bridge Matter (BETA)",
+            "zh": "Matter 桥接器 (BETA)"
+          },
+          "page": "Matter-Bridge-Configuration"
+        },
+        {
+          "type": "page",
+          "labels": {
+            "en": "Expose KNX to Matter (BETA)",
+            "it": "Expose KNX to Matter (BETA)",
+            "de": "Expose KNX to Matter (BETA)",
+            "fr": "Expose KNX to Matter (BETA)",
+            "es": "Expose KNX to Matter (BETA)",
+            "zh": "将 KNX 暴露到 Matter (BETA)"
+          },
+          "page": "Matter-Bridge"
+        }
+      ]
+    },
+    {
+      "key": "samples",
+      "labels": {
+        "en": "Samples",
+        "it": "Esempi",
+        "de": "Beispiele",
+        "fr": "Exemples",
+        "es": "Ejemplos",
+        "zh": "示例"
+      },
+      "items": [
+        {
+          "type": "page",
+          "labels": {
+            "en": "Samples Home"
+          },
+          "page": "-SamplesHome"
+        },
+        {
+          "type": "page",
+          "labels": {
+            "en": "Logger"
+          },
+          "page": "Logger-Sample"
+        },
+        {
+          "type": "page",
+          "labels": {
+            "en": "Switch Light"
+          },
+          "page": "-Sample---Switch-light"
+        },
+        {
+          "type": "page",
+          "labels": {
+            "en": "Dimming"
+          },
+          "page": "-Sample---Dimming"
+        },
+        {
+          "type": "page",
+          "labels": {
+            "en": "Staircase",
+            "it": "Staircase",
+            "de": "Treppenhaus",
+            "fr": "Escalier",
+            "es": "Escalera",
+            "zh": "楼梯定时器"
+          },
+          "page": "-Sample---Staircase"
+        },
+        {
+          "type": "page",
+          "labels": {
+            "en": "Garage",
+            "it": "Garage",
+            "de": "Garage",
+            "fr": "Garage",
+            "es": "Garaje",
+            "zh": "车库"
+          },
+          "page": "-Sample---Garage"
+        },
+        {
+          "type": "page",
+          "labels": {
+            "en": "RGB color"
+          },
+          "page": "-Sample---RGB-Color"
+        },
+        {
+          "type": "page",
+          "labels": {
+            "en": "RGBW color + White"
+          },
+          "page": "-Sample---RGBW-Color-plus-White"
+        },
+        {
+          "type": "page",
+          "labels": {
+            "en": "Command a scene actuator"
+          },
+          "page": "-Sample---Control-a-scene-actuator"
+        },
+        {
+          "type": "page",
+          "labels": {
+            "en": "Datapoint 213.x 4x Setpoint"
+          },
+          "page": "-Sample---DPT213"
+        },
+        {
+          "type": "page",
+          "labels": {
+            "en": "Datapoint 222.x 3x Setpoint"
+          },
+          "page": "-Sample---DPT222"
+        },
+        {
+          "type": "page",
+          "labels": {
+            "en": "Datapoint 237.x DALI diags"
+          },
+          "page": "-Sample---DPT237"
+        },
+        {
+          "type": "page",
+          "labels": {
+            "en": "Datapoint 2.x 1 bit proprity"
+          },
+          "page": "-Sample---DPT2"
+        },
+        {
+          "type": "page",
+          "labels": {
+            "en": "Datapoint 22.x RCHH Status"
+          },
+          "page": "-Sample---DPT22"
+        },
+        {
+          "type": "page",
+          "labels": {
+            "en": "Datetime to BUS"
+          },
+          "page": "-Sample---DateTime-to-BUS"
+        },
+        {
+          "type": "page",
+          "labels": {
+            "en": "IoT Bridge",
+            "it": "IoT Bridge",
+            "de": "IoT Bridge",
+            "fr": "IoT Bridge",
+            "es": "IoT Bridge",
+            "zh": "物联网桥接"
+          },
+          "page": "-Sample---IoT-Bridge"
+        },
+        {
+          "type": "page",
+          "labels": {
+            "en": "KNX Multi Routing",
+            "it": "KNX Multi Routing",
+            "de": "KNX Multi Routing",
+            "fr": "KNX Multi Routing",
+            "es": "KNX Multi Routing",
+            "zh": "KNX 多路由"
+          },
+          "page": "-Sample---KNX-Multi-Routing"
+        },
+        {
+          "type": "page",
+          "labels": {
+            "en": "KNX Router Filter",
+            "it": "KNX Router Filter",
+            "de": "KNX Router Filter",
+            "fr": "KNX Router Filter",
+            "es": "KNX Router Filter",
+            "zh": "KNX 路由过滤器"
+          },
+          "page": "-Sample---KNX-Router-Filter"
+        },
+        {
+          "type": "page",
+          "labels": {
+            "en": "Serial FT1.2 / KBerry wiring",
+            "it": "Cablaggio Serial FT1.2 / KBerry",
+            "de": "Serial FT1.2 / KBerry Verdrahtung",
+            "fr": "Câblage Serial FT1.2 / KBerry",
+            "es": "Cableado Serial FT1.2 / KBerry",
+            "zh": "FT1.2 / KBerry 接线示例"
+          },
+          "page": "-Sample---FT12"
+        },
+        {
+          "type": "page",
+          "labels": {
+            "en": "Read Status"
+          },
+          "page": "-Sample---Read-value-from-Device"
+        },
+        {
+          "type": "page",
+          "labels": {
+            "en": "Virtual Device"
+          },
+          "page": "-Sample---Virtual-Device"
+        },
+        {
+          "type": "page",
+          "labels": {
+            "en": "Subtype decoded"
+          },
+          "page": "-Sample---Subtype"
+        },
+        {
+          "type": "page",
+          "labels": {
+            "en": "Alexa"
+          },
+          "page": "-Sample---Alexa"
+        },
+        {
+          "type": "page",
+          "labels": {
+            "en": "Apple Homekit"
+          },
+          "page": "-Sample---Apple-Homekit"
+        },
+        {
+          "type": "page",
+          "labels": {
+            "en": "Google Home"
+          },
+          "page": "-Sample---Google-Assistant"
+        },
+        {
+          "type": "page",
+          "labels": {
+            "en": "Switch on/off POE port of Unifi switch"
+          },
+          "page": "-Sample---UnifiPOE"
+        },
+        {
+          "type": "page",
+          "labels": {
+            "en": "Set configuration by msg"
+          },
+          "page": "-Sample-setConfig"
+        },
+        {
+          "type": "page",
+          "labels": {
+            "en": "Scene Controller node"
+          },
+          "page": "Sample-Scene-Node"
+        },
+        {
+          "type": "page",
+          "labels": {
+            "en": "WatchDog node"
+          },
+          "page": "-Sample---WatchDog"
+        },
+        {
+          "type": "page",
+          "labels": {
+            "en": "Global Context node"
+          },
+          "page": "SampleGlobalContextNode"
+        },
+        {
+          "type": "page",
+          "labels": {
+            "en": "Alerter node"
+          },
+          "page": "SampleAlerter"
+        },
+        {
+          "type": "page",
+          "labels": {
+            "en": "Load control node"
+          },
+          "page": "SampleLoadControl"
+        },
+        {
+          "type": "page",
+          "labels": {
+            "en": "MySQL, InfluxDB, MQTT Sample"
+          },
+          "page": "Sample-KNX2MQTT-KNX2MySQL-KNX2InfluxDB"
+        }
+      ]
+    }
+  ]
+}

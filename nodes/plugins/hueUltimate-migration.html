@@ -1,0 +1,23 @@
+<script type="text/javascript" src="resources/node-red-contrib-hue-ultimate/flowMigrationBackup.js"></script>
+<script type="text/javascript" src="resources/node-red-contrib-hue-ultimate/hueControllerMigration.js"></script>
+<script type="text/javascript" src="resources/node-red-contrib-hue-ultimate/ultimatePackageMigration.js"></script>
+<script type="text/javascript">
+(function () {
+  let migration;
+  RED.plugins.registerPlugin('hueUltimateMigration', {
+    onadd: function () {
+      const options = {
+        kind: 'hue',
+        title: 'HUE Ultimate',
+        types: window.HueStandaloneKNXUltimateHueControllerMigration.PACKAGE_NODE_TYPES
+      };
+      options.environment = window;
+      options.backup = window.HueStandaloneKNXUltimateFlowMigrationBackup;
+      options.profiles = window.HueStandaloneKNXUltimateHueControllerMigration;
+      migration = window.UltimatePackageMigration.install(RED, options);
+      window.HueUltimateMigration = migration;
+    },
+    onremove: function () { if (migration) migration.dispose(); }
+  });
+}());
+</script>

@@ -1,0 +1,722 @@
+---
+layout: wiki
+title: "HUE Controller"
+lang: es
+permalink: /wiki/es-HUE%20Controller
+---
+# HUE Controller
+
+[**Tutoriales en vídeo de KNX-Ultimate (lista de YouTube)**](https://www.youtube.com/playlist?list=PL9Yh1bjbLAYrU8PsVhW4xzEug2WtVFv3E)
+
+<div data-hue-controller-overview="hero" style="margin:18px 0 28px;padding:24px;border-radius:16px;background:linear-gradient(135deg,#0b2d5a 0%,#1767bf 55%,#2a8dff 100%);box-shadow:0 14px 30px rgba(11,45,90,0.24);color:#f4f9ff;">
+  <div style="font-size:0.72rem;letter-spacing:0.18em;text-transform:uppercase;font-weight:700;color:#cfe4ff;">Hue API v2 · KNX · Node-RED</div>
+  <div style="font-size:1.75rem;line-height:1.15;font-weight:800;margin:8px 0 10px;">Un nodo. Quince funciones Hue.</div>
+  <p style="margin:0 0 18px;max-width:860px;line-height:1.6;color:#f4f9ff;">HUE Controller reúne todas las funciones consolidadas de los antiguos nodos Hue dedicados en un único nodo autónomo y mantenido. Elige un dispositivo o recurso Hue: su tipo se detecta automáticamente y el editor, los mapeos KNX y los puertos del flujo se adaptan.</p>
+  <div style="display:flex;flex-wrap:wrap;gap:10px;">
+    <div style="flex:1 1 150px;min-width:130px;padding:10px 12px;border-radius:10px;background:rgba(255,255,255,0.12);"><strong style="display:block;font-size:1.05rem;color:#fff;">15</strong><span style="font-size:0.76rem;color:#e8f3ff;">funciones de dispositivo</span></div>
+    <div style="flex:1 1 150px;min-width:130px;padding:10px 12px;border-radius:10px;background:rgba(255,255,255,0.12);"><strong style="display:block;font-size:1.05rem;color:#fff;">Hue API v2</strong><span style="font-size:0.76rem;color:#e8f3ff;">recursos nativos</span></div>
+    <div style="flex:1 1 150px;min-width:130px;padding:10px 12px;border-radius:10px;background:rgba(255,255,255,0.12);"><strong style="display:block;font-size:1.05rem;color:#fff;">KNX</strong><span style="font-size:0.76rem;color:#e8f3ff;">integración opcional</span></div>
+  </div>
+</div>
+
+## Todo desde un único nodo
+
+| Área | Funciones | Capacidades principales |
+|---|---|---|
+| **Iluminación y potencia** | Luz / grupo, Enchufe | On/Off, regulación relativa y absoluta, blanco regulable, RGB/HSV, efectos, perfiles día/noche, localización, control de potencia y feedback bidireccional. |
+| **Escenas y controles** | Escena, Botón, Tap dial | Llamada de escena simple o numerada, mapeos DPT 1/18, pulsaciones cortas/largas/repetidas, alternancia y eventos giratorios. |
+| **Presencia y seguridad** | Movimiento, Movimiento de área, Movimiento de cámara, Contacto | Estados de movimiento y abierto/cerrado, sincronización inicial, publicación KNX y eventos de flujo opcionales. |
+| **Entorno** | Nivel de luz, Temperatura, Humedad | Lecturas de sensores Hue mapeadas a los datapoints KNX apropiados. |
+| **Salud del dispositivo** | Batería, Conectividad Zigbee, Actualización de software | Porcentaje de batería, estado de conexión y disponibilidad de actualizaciones en KNX o en el flujo Node-RED. |
+
+## Una experiencia Controller coherente
+
+- Un selector Hue orientado al dispositivo con autocompletado y actualización; la función correspondiente se obtiene automáticamente.
+- Al hacer clic o enfocar el campo del dispositivo siempre se abre la lista Hue completa, incluso después de una selección; al escribir se filtra.
+- Seleccionar otro recurso Hue es solo una vista previa hasta que se guarda el editor. Al pulsar `Cancelar` se restauran el dispositivo, la función y los mapeos guardados anteriormente.
+- El selector de dispositivos Hue permanece oculto hasta que se selecciona y conecta un Hue Bridge y se carga su catálogo de recursos. Durante la espera se muestra un indicador de carga. Al volver a poner el bridge en `none`, el indicador, el selector y el editor del dispositivo se ocultan de nuevo.
+- Un nodo ya configurado mantiene visible pero deshabilitado el selector del dispositivo Hue guardado mientras el bridge seleccionado está desconectado; las pestañas de mapeo KNX siguen disponibles. Tras 15 segundos, la etiqueta de espera indica que no se puede acceder a Hue Bridge. La búsqueda continúa en segundo plano y finalmente aparece un error rojo fijo si el bridge no llega a estar disponible.
+- Al seleccionar `none` para el gateway KNX se ocultan únicamente las pestañas de mapeo de Luz. Los campos GA, DPT y Nombre ya montados se conservan sin cambios y reaparecen inmediatamente con el diseño vertical correcto al volver a seleccionar el gateway.
+- Los valores temporales emitidos mediante programación por Node-RED mientras se inicializan los selectores de configuración KNX y Hue no sustituyen los gateways guardados. Solo una selección explícita de `none` oculta las pestañas de mapeo de Luz.
+- Las pestañas de mapeo de Luz contienen únicamente los controles de configuración; se han eliminado las imágenes decorativas de Regulación, Blanco regulable y RGB.
+- Mapeos de luz según capacidades: regulación, blanco regulable, RGB/HSV y efectos nativos siguen las propiedades en vivo `dimming`, `color_temperature`, `color` y `effects` del recurso de luz Hue API v2 seleccionado.
+- Editor de Luz no bloqueante: los mapeos guardados se muestran inmediatamente sin esperar a la caché de recursos Hue del runtime. Las capacidades actuales se cargan en segundo plano; si fallan, los mapeos y el selector de pines siguen disponibles y aparece un error rojo fijo de Node-RED.
+- Editor de Luz resistente: Locate y el contenedor de mapeo se inicializan antes que los widgets opcionales de Efectos y pestañas. Un gateway KNX guardado sobrevive a valores de selector temporalmente vacíos durante el arranque del editor. Los fallos del navegador y un primer comando Locate rechazado generan un error rojo fijo de Node-RED con el detalle técnico, en lugar de dejar el editor en silencio.
+- Las filas KNX compactas mantienen GA, DPT y Nombre en una sola línea; DPT y Nombre usan anchos reducidos, y Nombre puede contraerse en editores estrechos sin modificar el valor guardado. Los valores DPT guardados se conservan mientras las opciones del selector se cargan de forma asíncrona.
+- Gateway KNX opcional: usa direcciones de grupo o nombres ETS importados; los datapoints compatibles proceden del gateway seleccionado.
+- Puertos Node-RED dinámicos para entradas Hue API v2 validadas y eventos Hue, cuando sean compatibles.
+- Lectura inicial, sincronización de estado Hue→KNX y protección contra bucles conservadas en cada perfil privado.
+- Migración totalmente local de los quince tipos obsoletos, seguida de un borrador de correo editable, un botón de apoyo opcional en el mensaje final, revisión local y Deploy manual.
+
+## Empieza en cuatro pasos
+
+1. Configura una vez el **Bridge Hue**.
+2. Añade **HUE Controller** y elige o actualiza un **Dispositivo Hue**; el **Tipo de dispositivo** se completa automáticamente.
+3. Selecciona un **Gateway KNX** y mapea comandos/estados, o deja `none` para usarlo solo en el flujo.
+4. Configura el comportamiento y los puertos propios de la función, despliega y comprueba el estado live del nodo.
+
+> **¿Sin gateway KNX?** El Controller sigue funcionando como integración Hue–Node-RED. Los campos KNX se ocultan y permanecen disponibles las opciones de flujo compatibles con la función elegida.
+
+Las secciones siguientes forman la referencia completa por función, consolidada desde los antiguos nodos dedicados.
+
+## Convertir nodos HUE legacy
+
+El botón de migración solo aparece cuando el editor de Node-RED detecta al menos un nodo HUE legacy en los flujos actuales. Un enlace al [vídeo explicativo de la migración en YouTube](https://youtu.be/f0Evf2QFI7c) aparece inmediatamente antes del mismo botón naranja de alto contraste con texto blanco en HUE Controller y en cada editor HUE legacy. El aviso confirma que ningún dato del flujo ni de los nodos sale del navegador.
+
+Pulsa **Convertir nodos HUE legacy** y confirma. El navegador realiza toda la conversión localmente y no envía ningún dato de flujo, nodo, `hue-ultimate-config`, `knxUltimate-config`, dirección de grupo, conexión, credencial, nombre, posición ni ID. Tras la conversión solo abre un borrador de correo editable dirigido al autor sin abandonar Node-RED. El borrador contiene únicamente el número de nodos convertidos y espacio para notas opcionales; tú decides si lo envías y nunca se manda automáticamente. El mensaje final de Node-RED ofrece un botón de apoyo opcional; la página de donación solo se abre al pulsarlo.
+
+Tras confirmar y antes de modificar los nodos, el navegador inicia automáticamente la descarga de una copia JSON con fecha y hora de todos los flujos presentes en el editor, incluidas pestañas, subflujos, nodos de configuración, grupos y conexiones. El archivo usa el formato de exportación estándar de Node-RED y puede volver a importarse. Se excluyen las credenciales declaradas por los nodos, como en la exportación estándar. El navegador puede preguntar dónde guardar el archivo. Si no es posible preparar la copia o iniciar su descarga, no se convierte ningún nodo.
+
+El navegador cierra el editor del nodo actual y transforma únicamente los nodos HUE legacy detectados en instancias de HUE Controller. Las propiedades guardadas, referencias de configuración, posiciones, grupos y conexiones permanecen intactos. El espacio de trabajo se marca como modificado, pero la herramienta nunca lo despliega automáticamente: revisa el resultado y pulsa **Deploy** personalmente. Un nodo modificado, un flujo bloqueado o un error de conversión local deja el espacio de trabajo sin cambios. **Comprobación de seguridad:** antes del Deploy, revisa cada nodo HUE modificado y comprueba su función, referencias de configuración, puertos de entrada/salida y conexiones. Al finalizar el proceso, un mensaje fijo de Node-RED permanece visible hasta que pulses **OK**.
+
+Los eventos Hue siguen siendo actualizaciones de estado y no se convierten en nuevos comandos Hue. HUE Controller contiene perfiles privados de runtime, editor, plantillas y traducciones, por lo que no depende de que se carguen los tipos de nodo obsoletos. El nodo Hue Light original permanece sin cambios. Los nodos Hue dedicados siguen registrados para los flujos existentes, pero quedan congelados y no recibirán nuevas funciones ni actualizaciones de mantenimiento. Node-RED oculta de la paleta su categoría especial `deprecated`; las instancias existentes siguen siendo editables y desplegables, usan un color más claro que HUE Controller, aparecen marcadas con `(deprecated)` en el lienzo y muestran un aviso de migración en la parte superior del editor.
+
+<!-- HUE_CONTROLLER_PROFILE_DOCS_START -->
+
+## Función del dispositivo
+
+- [Luz / grupo de luces (`light`)](#hue-controller-docs-light)
+- [Enchufe / salida (`plug`)](#hue-controller-docs-plug)
+- [Botón (`button`)](#hue-controller-docs-button)
+- [Tap dial (`relative_rotary`)](#hue-controller-docs-relative_rotary)
+- [Movimiento (`motion`)](#hue-controller-docs-motion)
+- [Movimiento de área (`area_motion`)](#hue-controller-docs-area_motion)
+- [Movimiento de cámara (`camera_motion`)](#hue-controller-docs-camera_motion)
+- [Contacto (`contact`)](#hue-controller-docs-contact)
+- [Nivel de luz (`light_level`)](#hue-controller-docs-light_level)
+- [Temperatura (`temperature`)](#hue-controller-docs-temperature)
+- [Humedad (`humidity`)](#hue-controller-docs-humidity)
+- [Escena (`scene`)](#hue-controller-docs-scene)
+- [Batería (`device_power`)](#hue-controller-docs-device_power)
+- [Conectividad Zigbee (`zigbee_connectivity`)](#hue-controller-docs-zigbee_connectivity)
+- [Actualización de software (`device_software_update`)](#hue-controller-docs-device_software_update)
+
+<span id="hue-controller-docs-light" data-hue-controller-type="light"></span>
+
+## Luz / grupo de luces (`light`)
+
+Este nodo controla luces Philips Hue, individuales o agrupadas, y asocia sus comandos y estados con KNX.
+
+Sin una pasarela KNX, aparece un aviso de uso exclusivo mediante el flujo en lugar del encabezado duplicado «Philips HUE».
+
+**Grupos de luces:** cuando hay una pasarela KNX configurada, al seleccionar un `grouped_light` siempre se muestran todas las asignaciones de Interruptor, Regulación, Blanco ajustable, RGB/HSV, Efectos y Comportamiento. El editor no limita estos campos según las luces incluidas actualmente en el grupo.
+
+**General**
+
+| Propiedad | Descripción |
+|-|-|
+| KNX GW | Seleccione la puerta de enlace KNX para ser utilizada |
+| Hue Bridge | Seleccione la Hue Bridge que se utilizará |
+| Nombre | Luz Hue o luz agrupada para usar (autocompletar mientras escribe). |
+
+**Localizar dispositivo**
+
+El botón `Locate` (icono de reproducción) inicia una sesión de identificación Hue para el recurso seleccionado. Mientras la sesión está activa, el botón muestra el icono de parada y el bridge hace parpadear la luz — o todas las luces del grupo — cada segundo. Pulsa de nuevo el botón para detenerla al instante; en caso contrario finalizará automáticamente tras 10 minutos.
+
+**Opciones**
+
+Aquí puede vincular las direcciones del grupo KNX con los comandos/estados Hue disponibles.
+
+Comenzar a escribir en el campo GA (nombre o dirección de grupo); Aparecen sugerencias mientras escribe.
+
+**Cambiar**
+
+| Propiedad | Descripción |
+|-|-|
+| Control | Este GA se usa para encender/apagar la luz Hue a través de un valor booleano KNX verdadero/falso |
+| Estado | Enlace esto a la dirección de grupo de estado del interruptor de la luz |
+
+**Oscuro**
+
+| Propiedad | Descripción |
+|-|-|
+| Control Dim | Relativo tenue de la luz Hue. Puede establecer la velocidad de atenuación en la pestaña **Comportamiento** . |
+| Control % | Cambia el brillo de la luz Hue absoluto (0-100%) |
+| Estado % | Enlace esto al estado de brillo de la luz Dirección de grupo KNX |
+| Velocidad dim (MS) | Velocidad de atenuación en milisegundos. Se aplica tanto al brillo de la luz como a los puntos de datos de color blanco sintonizable. Calculado sobre el rango 0% → 100%. |
+| Min Dim brillo | El brillo mínimo que la lámpara puede alcanzar. Por ejemplo, si está atenuando la luz hacia abajo, la luz dejará de atenuar en el %de brillo especificado. |
+| Brillo dim en el máximo | El brillo máximo que la lámpara puede alcanzar. Por ejemplo, si está atenuando la iluminación, la luz dejará de atenuar en el %de brillo especificado. |
+
+**blanco sintonizable**
+
+| Propiedad | Descripción |
+|-|-|
+| Control Dim | Cambie la temperatura blanca usando DPT 3.007 atenuación. La velocidad se establece en la pestaña **comportamiento** . |
+| Control % | Cambie la temperatura blanca usando DPT 5.001. 0 = completo cálido, 100 = frío completo. |
+| Estado %| Estado de temperatura GA. DPT 5.001 Valor absoluto: 0 = completo cálido, 100 = frío completo. |
+| Control Kelvin | **DPT 7.600: ** Temperatura establecida en Kelvin usando el rango KNX 2000-6535 (convertido en Hue Mirek).
+**DPT 9.002:** Temperatura establecida usando el rango de Hue 2000-6535 K (la ambiente comienza a 2200 K). Las conversiones pueden introducir pequeñas desviaciones. |
+| Estado Kelvin | **DPT 7.600: ** Lea la temperatura en Kelvin usando el rango KNX 2000-6535 (convertido desde Hue).
+**DPT 9.002:** Temperatura de lectura usando el rango de Hue 2000-6535 K (la ambiente comienza en 2200 K). Las conversiones pueden introducir pequeñas desviaciones. |
+| Invertir la dirección tenue | Invierte la dirección tenue. |
+
+**RGB/HSV**
+
+| Propiedad | Descripción |
+|-|-|
+| **Sección RGB** ||
+| Control rgb | Cambie de color usando el triplete RGB (R, G, B). Se maneja la corrección de gama. Enviar un color enciende la luz y establece color/brillo (perceptual). Enviar R, G, B = 0 apaga la luz. |
+| Estado RGB | Dirección de grupo de estado de color de la luz. DataPoint aceptado es RGB Triplet (R, G, B) |
+| **Sección HSV** ||
+| Color H Dim | Ciclo a través de HSV Hue usando DPT 3.007 Dimming. La velocidad se establece en la pestaña **comportamiento** . |
+| Estado H %| Estado del círculo cromático HSV. |
+| Control s dim | Cambia la saturación de color de la luz, utilizando DPT 3.007 atenuado. Puede establecer la velocidad de atenuación en la pestaña **_ comportamiento _** |
+| Estado s %| La dirección de grupo de estado de saturación de color de luz. |
+| Velocidad dim (MS) | La velocidad de atenuación, en milisegundos, de escala de abajo hacia arriba. |
+
+Para controlar el HSV "V" (brillo), use los controles estándar en la pestaña **Dim** .
+
+**Efectos**
+
+_Non-Hue Efectos básicos_
+
+| Propiedad | Descripción |
+|-|-|
+| Parpadeo | _true_ parpadear la luz, _false_ deja de parpadear. Parpadea la luz encendida y apagada. Útil para la señalización. Funciona con todas las luces Hue. |
+| Ciclo de color | _true_ ciclo de inicio, _false_ ciclo de detención. Cambia aleatoriamente el color de la luz Hue a intervalo regular. Funciona con todas las luces Hue que tienen capacidades de color. El efecto de color comenzará 10 segundos después del conjunto. |
+
+_Extos efectos nativos_
+
+Use la tabla **Hue Native Effects** para asignar sus valores de KNX a los efectos respaldados por la luz seleccionada (por ejemplo, `vela`,` chimenea`, `prism`). Cada fila vincula un valor KNX (booleano, numérico o textual, dependiendo del punto de datos que elija) con un efecto Hue. En el lado de KNX puedes:
+
+- Envíe el valor asignado para activar ese efecto;
+- Opcionalmente, proporcione una dirección de grupo de estado: el nodo emite el valor asignado cada vez que el puente HUE informa un cambio de efecto; Si no existe mapeo, se envía el nombre del efecto sin procesar (requiere un DPT textual como 16.xxx).
+
+**Comportamiento**
+
+| Propiedad | Descripción |
+| ----------------------------------------- | --------------------------------------------------------------------------------------------------- --------------------------------------------------------------------------------------------------- |
+| Leer el estado al inicio | Lea el estado de la luz Hue en la inicio de Node-RED o el despliegue completo de Node-RED, y envíe ese estado al bus KNX |
+| Estado de brillo KNX | Actualiza el estado de la dirección del grupo de brillo KNX, siempre que la lámpara Hue se encienda/apague. Las opciones son **cuando la luz Hue está apagada, envíe 0%. Cuando se enciende, restaure el valor anterior (comportamiento de KNX predeterminado) ** y**dejar como es (comportamiento Hue predeterminado) ** . Si tiene KNX Dimmer con estado de brillo, como MDT, la opción sugerida es _**cuando la luz Hue está apagada, envíe 0%. Cuando se enciende, restaure el valor anterior (comportamiento predeterminado KNX)** _ |
+| Actualizar el estado local en caché de Hue a partir de escrituras del bus KNX | Opcion avanzada, activada por defecto. Si esta activa, las escrituras que llegan desde el bus KNX tambien actualizan inmediatamente el estado local en cache de Hue del nodo, sin esperar al feedback/evento del bridge Hue. Esto da reacciones locales mas rapidas y respuestas inmediatas de lectura KNX mas coherentes, especialmente cuando la luz o el grupo estan apagados. Desactivela si prefiere que la cache siga solo el feedback/evento real del bridge Hue. |
+| Encender el comportamiento | Establece el comportamiento de sus luces cuando se enciende. Puede elegir entre diferentes comportamientos.
+ **Seleccione Color: ** La luz se encenderá con el color de su elección. Para cambiar el color, simplemente haga clic en el selector de color (debajo del control de color_select).
+**Seleccione la temperatura y el brillo: ** La luz se encenderá con la temperatura (Kelvin) y el brillo (0-100) de su elección.
+**Ninguna:** La luz retendrá su último estado. En caso de que haya habilitado la iluminación nocturna, después de finalizar la noche, la lámpara reanudará el estado de color/temperatura/brillo establecido durante el día. |
+| Iluminación nocturna | Permite establecer un color/brillo de luz particular por la noche. Las opciones son las mismas que el día. Puede seleccionar una temperatura/brillo o color. Una temperatura acogedora de 2700 Kelvin, con un brillo del 10% o 20%, es una buena opción para la luz nocturna del baño. |
+| Día/noche | Seleccione la dirección de grupo utilizada para establecer el comportamiento diurno/nocturno. El valor de la dirección de grupo es _true_ if Daytime, _false_ si nocturno. |
+| Invertir valor día/noche | Invierta los valores de la dirección de grupo _day/noche_. El valor predeterminado está **sin control** . |
+| Leer el estado al inicio | Lea el estado en el inicio y emita el evento al autobús KNX al inicio/reconexión. (Predeterminado "no") |
+| Forzar el modo diurno | Puede forzar el modo diurno cambiando manualmente la luz como se describe aquí: **Cambie al modo de día apagando rápidamente la lighia y luego (solo esta luz) ** hace lo que describe y actúa solo en esta luz.**Cambie al modo diurno apagando rápidamente la lighia y luego (aplique todos los nodos de luz)** Actúa a todos los nodos de luz, configurando la dirección del grupo diurno/nocturno en el modo de día. |
+| Pins de entrada/salida de nodo | Ocultar o mostrar los pines de entrada/salida. Los pines de entrada/salida permiten que el nodo acepte la entrada MSG del flujo y envíe la salida MSG al flujo. La entrada MSG debe seguir los estándares de HUE API v.2. Este es un mensaje de ejemplo, que enciende la luz: <code> msg.on = {"on": true} </code>. Consulte la [página oficial de la API de Hue](https://developers.meethue.com/develop/hue-api-v2/api-reference/#resource_light__id__put) |
+
+##### Nota
+
+La función de atenuación funciona en el modo **KNX `Start` y`stop` ** . Para comenzar a atenuar, envíe solo un telegrama de "inicio" KNX. Para dejar de atenuar, envíe un telegrama de "parar" KNX.**Recuerde que** , cuando configura las propiedades de su pared Swiches.
+
+---
+
+<span id="hue-controller-docs-plug" data-hue-controller-type="plug"></span>
+
+## Enchufe / salida (`plug`)
+
+### Enchufe / salida Hue
+
+#### Descripción general
+
+El nodo de enchufe de Hue enlaza un enchufe inteligente Philips Hue (servicio `plug``) con direcciones de grupo KNX para que pueda controlar la alimentación y rastrear el estado directamente desde el bus.
+
+- Admite **Control de encendido/apagado** y **Comentarios de estado**.
+- Mapeo opcional Hue `power_state` (en / en espera).
+- Puede exponer los pines de entrada/salida de Node-RED para reenviar eventos de HUE a flujos o enviar cargas útiles de API avanzadas.
+
+#### Configuración
+
+| Campo | Descripción |
+|-|-|
+|KNX GW |KNX Gateway utilizado para telegramas |
+|Hue Bridge |Hue Bridge configurada |
+|Nombre |Seleccione el enchufe Hue de la lista de autocompletar |
+|Control |KNX GA para comandos de encendido/apagado (DPT booleano) |
+|Estado |GA para la retroalimentación de encendido/apagado proveniente de Hue |
+|Estado de poder |Hue opcional GA de reflejo `power_state` (boolean/text) |
+|Leer el estado al inicio |Cuando está habilitado, el nodo emite el estado de enchufe actual en la implementación/conexión |
+|Pins de E/S de nodo |Habilite los pasadores de entrada/salida de Node-RED.La entrada espera cargas útiles de API Hue (por ejemplo, `{en: {on: true}}`).Salir reenvía cada evento de Hue.|
+
+#### consejos de mapeo KNX
+
+- Use un punto de datos booleano (por ejemplo, DPT 1.001) para el comando y el estado.
+- Si expone `power_state`, asigna a un ga booleano (true =` on`, false = `en espera`).
+- Para solicitudes de lectura (`groupValue_read`) El nodo devuelve el último valor Hue en caché.
+
+#### Integración de flujo
+
+Cuando _node I/o Pins_ están habilitados:
+
+- **Entrada:** Enviar cargas útiles de Hue V2 para realizar acciones avanzadas (por ejemplo, `msg.on = {on: true}`).
+- **Salida:** Recibe un objeto de evento `{carga útil: boolean, on, power_state, rawevent}` cada vez que Hue informa un cambio.
+
+#### Referencia de API de Hue
+
+El nodo usa `/recurse/plug/{id}` sobre https.Los cambios de estado se entregan a través de la transmisión de eventos HUE y se almacenan en caché para las respuestas de lectura de KNX.
+
+---
+
+<span id="hue-controller-docs-button" data-hue-controller-type="button"></span>
+
+## Botón (`button`)
+
+Los mapas del nodo del botón Hue Eventos del botón Hue a las direcciones de grupo KNX y exponen los mismos eventos en su salida de flujo a través de <code> Botton.button_report.event </code>.
+
+Comience a escribir en el campo GA (nombre o dirección de grupo) para vincular el KNX GA;Los dispositivos aparecen mientras escribe.
+
+**General**
+
+| Propiedad | Descripción |
+|-|-|
+|KNX GW |Seleccione la puerta de enlace KNX para ser utilizada |
+|Hue Bridge |Seleccione la Hue Bridge que se utilizará |
+|Botón Hue |Botón Hue para ser utilizado (automáticamente mientras escribe) |
+
+**Cambiar**
+
+| Propiedad | Descripción |
+|-|-|
+|Interruptor |GA activado por <code> Short \ _Release </code> (Press/versión rápida).|
+|Estado GA |Comentarios opcionales GA Cuando <em> Toggle Values ​​</em> está habilitado para mantener el estado interno de alternancia alineado con otros actuadores.|
+
+**Oscuro**
+
+| Propiedad | Descripción |
+|-|-|
+|Atenúa |GA utilizado durante <code> long \ _press </code>/<code> repetir </code> eventos para atenuar (típicamente DPT 3.007).|
+
+**Comportamiento**
+
+| Propiedad | Descripción |
+|-|-|
+|Valores de al revés |Si está habilitado, el nodo alterna entre <código> True/False </code> y ACT/Down Dimmting Life cargas.|
+|Cambiar carga útil |La carga útil enviada a KNX/Flow cuando los valores de alternar están deshabilitados.|
+|Dim carga útil |La dirección enviada a KNX/Flow cuando los valores de alternar están deshabilitados.|
+
+##### salidas
+
+1. Salida estándar
+: `msg.payload` lleva el booleano (o objeto DIM) enviado a KNX;`msg.event` es la cadena de eventos de Hue (por ejemplo,` short_release`, `repetir`).
+
+##### Detalles
+
+`msg.event` espejos` button.button_report.event`.El evento Hue original está expuesto en `msg.rawevent`.Use el estado opcional GA para mantener el estado de alternar en sincronización con interruptores de pared u otros controladores.
+
+---
+
+<span id="hue-controller-docs-relative_rotary" data-hue-controller-type="relative_rotary"></span>
+
+## Tap dial (`relative_rotary`)
+
+El nodo **TAP TAP** mapea el servicio rotativo del Hue Tap dial a KNX y reenvía los eventos Hue bruto a su flujo.Use el icono de actualización junto al campo del dispositivo después de combinar un nuevo dial en el puente.
+
+Pestañas ###
+
+- **Mapeo** - Seleccione KNX GA y DPT utilizados para los eventos de rotación.Puntos de datos compatibles: DPT 3.007 (DIM relativo), DPT 5.001 (nivel absoluto 0-100%) y DPT 232.600 (control de color del proveedor).
+- **Comportamiento** - Mostrar u ocultar el pin de salida de Node-RED.Cuando no se configura la puerta de enlace KNX, la salida se mantiene habilitada para que los eventos Hue aún alcancen el flujo.
+
+##### Configuración general
+
+| Propiedad | Descripción |
+|-|-|
+|KNX GW |KNX Gateway utilizada para GA Autocomplete.|
+|Hue Bridge |Hue Bridge aloja el dial de grifo.|
+|Hue Tap dial |Dispositivo rotativo para controlar (automáticamente; el botón de actualización vuelve a cargar la lista).|
+
+Pestaña de mapeo ###
+
+| Propiedad | Descripción |
+|-|-|
+|Rotar GA |KNX GA recibe eventos de rotación (admite DPT 3.007, 5.001, 232.600).|
+|Nombre |Etiqueta amistosa para la GA.|
+
+##### salidas
+
+|#| Puerto | carga útil |
+|-|-|-|
+| 1 | Salida estándar | `msg.payload` (objeto) Evento Hue sin procesar emitido por el dial de toque. |
+
+> ℹ️ Los widgets específicos de KNX aparecen solo después de seleccionar una puerta de enlace KNX;La pestaña de mapeo permanece oculta hasta que se configuran tanto el puente como la puerta de enlace.
+
+---
+
+<span id="hue-controller-docs-motion" data-hue-controller-type="motion"></span>
+
+## Movimiento (`motion`)
+
+Este nodo escucha un sensor de movimiento Hue y refleja los eventos para KNX y/o su flujo de Node-RED.
+
+Comience a escribir el nombre del dispositivo KNX o la dirección de grupo en el campo GA;Aparecen sugerencias mientras escribe.Presione el botón Actualizar junto a "Sensor Hue" para volver a cargar la lista de dispositivos desde el puente si agrega nuevos sensores.
+
+**General**
+
+| Propiedad | Descripción |
+|-|-|
+|KNX GW |KNX Gateway que recibe las actualizaciones de movimiento (requeridas antes de que aparezcan los campos de mapeo KNX).|
+|Hue Bridge |Hue Bridge para la consulta.|
+|Sensor de movimiento Hue |Sensor de movimiento de Hue (admite autocompletar y actualizar).|
+
+**Cartografía**
+
+| Propiedad | Descripción |
+|-|-|
+|Movimiento |KNX GA que recibe `verdadero` cuando se detecta el movimiento y` falso 'cuando el área está clara.DPT recomendado: <b> 1.001 </b>.|
+
+**Comportamiento**
+
+| Propiedad | Descripción |
+|-|-|
+|Pin de salida del nodo |Mostrar u ocultar la salida de Node-RED.Cuando no se selecciona la puerta de enlace KNX, el pin de salida permanece habilitado para que los eventos de movimiento Hue aún alcancen su flujo.|
+
+> ℹ️ Los widgets KNX permanecen ocultos hasta que seleccione una puerta de enlace KNX, lo que facilita el uso del nodo puramente como un oyente Node-RED.
+
+##### Producción
+
+1. Salida estándar - `msg.payload` (boolean)
+: `True` on Motion,` False` cuando termina el movimiento.
+
+---
+
+<span id="hue-controller-docs-area_motion" data-hue-controller-type="area_motion"></span>
+
+## Movimiento de área (`area_motion`)
+
+El nodo Hue Motion Area escucha los eventos de movimiento agregados de un área MotionAware (Hue Bridge Pro) y refleja el estado detectado/no detectado hacia KNX o hacia su flujo de Node-RED.
+
+Empiece a escribir en el campo GA (nombre o dirección de grupo) para vincular la GA KNX; las sugerencias aparecen mientras escribe.
+
+**General**
+
+|Propiedad|Descripción|
+|--|--|
+| KNX GW | Pasarela KNX que recibe el estado de movimiento del área. |
+| HUE Bridge | Puente Hue Pro que se utilizará. |
+| HUE Area | Área MotionAware (convenience o security) que se va a supervisar (autocompletar al escribir). |
+| Leer estado al inicio | Al iniciar o reconectar lee el valor actual y lo envía a KNX (por defecto: sí). |
+
+**Mapeo**
+
+|Propiedad|Descripción|
+|--|--|
+| Movimiento | GA KNX para el estado de movimiento del área (booleano). DPT recomendado: <b>1.001</b>. |
+
+**Comportamiento**
+
+|Propiedad|Descripción|
+|--|--|
+| Pin de salida del nodo | Muestra u oculta la salida de Node-RED. Sin pasarela KNX el pin permanece activo para que los eventos MotionAware sigan llegando al flujo. |
+
+##### Salida
+
+1. Salida estándar
+   : `msg.payload` (booleano): `true` cuando se detecta movimiento en el área, `false` en caso contrario.
+
+##### Detalles
+
+`msg.payload` contiene el último estado de movimiento agregado que proporciona el servicio MotionAware del área seleccionada.
+
+---
+
+<span id="hue-controller-docs-camera_motion" data-hue-controller-type="camera_motion"></span>
+
+## Movimiento de cámara (`camera_motion`)
+
+El nodo de movimiento de la cámara Hue escucha a Philips Hue Camera Motion Services y refleja el estado detectado/no detectado a KNX.
+
+Comience a escribir en el campo GA (nombre o dirección de grupo) para vincular el KNX GA;Los dispositivos aparecen mientras escribe.
+
+**General**
+
+| Propiedad | Descripción |
+|-|-|
+|KNX GW |Seleccione la puerta de enlace KNX para ser utilizada |
+|Hue Bridge |Seleccione la Hue Bridge que se utilizará |
+|Movimiento de la cámara Hue |Sensor de movimiento de la cámara Hue (autocompletar mientras se escribe) |
+|Leer el estado al inicio |En Startup/Reconnect, lea el valor actual y envíelo a KNX (predeterminado: no) |
+
+**Cartografía**
+
+| Propiedad | Descripción |
+|-|-|
+|Movimiento |KNX GA para el movimiento de la cámara (booleano).DPT recomendado: <b> 1.001 </b> |
+
+##### salidas
+
+1. Salida estándar
+: `msg.payload` (boolean):` true` cuando se detecta el movimiento;de lo contrario `falso '
+
+##### Detalles
+
+`msg.payload` conlleva el último estado de movimiento informado por el servicio de cámara Hue.
+
+---
+
+<span id="hue-controller-docs-contact" data-hue-controller-type="contact"></span>
+
+## Contacto (`contact`)
+
+Este nodo reenvía los eventos desde un sensor de contacto Hue y los asigna a las direcciones de grupo KNX.
+
+Comience a escribir en el campo GA, el nombre o la dirección de grupo de su dispositivo KNX, los dispositivos avaiables comienzan a aparecer mientras está escribiendo.
+
+**General**
+
+| Propiedad | Descripción |
+|-|-|
+|KNX GW |Seleccione la puerta de enlace KNX para ser utilizada |
+|Hue Bridge |Seleccione la Hue Bridge que se utilizará |
+|Sensor de contacto Hue |Sensor de contacto de Hue para ser utilizado (autocompletar mientras se escribe). |
+
+|Propiedad |Descripción |
+|-|-|
+|Contacto |Cuando el contacto se abre/cierra, envíe el valor de KNX: _true_ en activo/abierto, de lo contrario _false_.|
+
+##### salidas
+
+1. Salida estándar
+: carga útil (boolean): la salida estándar del comando.
+
+##### Detalles
+
+`msg.payload` lleva el evento Hue bruto (booleano/objeto).Úselo para una lógica personalizada si es necesario.
+
+---
+
+<span id="hue-controller-docs-light_level" data-hue-controller-type="light_level"></span>
+
+## Nivel de luz (`light_level`)
+
+Este nodo lee eventos de Lux de un sensor de luz Hue y los mapea a KNX.
+
+Emite la iluminancia ambiental (lux) cada vez que cambia.Comience a escribir en el campo GA (nombre o dirección de grupo) para vincular el KNX GA;Los dispositivos aparecen mientras escribe.
+
+**General**
+
+| Propiedad | Descripción |
+|-|-|
+|KNX GW |Seleccione la puerta de enlace KNX para ser utilizada |
+|Hue Bridge |Seleccione la Hue Bridge que se utilizará |
+|Sensor de luz Hue |Sensor de luz Hue para usar (autocompletar mientras escribe). |
+|Leer el estado al inicio |Lea el estado en el inicio y emita el evento al autobús KNX al inicio/reconexión.(Predeterminado "no") |
+
+**Cartografía**
+
+|Propiedad |Descripción |
+|-|-|
+|Lux |KNX GA que recibe el valor de Lux.|
+
+##### salidas
+
+1. Salida estándar
+: carga útil (número): valor de lux actual.
+
+##### Detalles
+
+`msg.payload` lleva el valor numérico de lux.Úselo para una lógica personalizada si es necesario.
+
+---
+
+<span id="hue-controller-docs-temperature" data-hue-controller-type="temperature"></span>
+
+## Temperatura (`temperature`)
+
+Este nodo lee la temperatura (° C) de un sensor de temperatura Hue y lo asigna a KNX.
+
+Comience a escribir en el campo GA (nombre o dirección de grupo) para vincular el KNX GA;Los dispositivos aparecen mientras escribe.
+
+**General**
+
+| Propiedad | Descripción |
+|-|-|
+|KNX GW |Seleccione la puerta de enlace KNX para ser utilizada |
+|Hue Bridge |Seleccione la Hue Bridge que se utilizará |
+|Sensor de temperatura Hue |Sensor de temperatura Hue (autocompletado mientras se escribe) |
+|Leer el estado al inicio |En Startup/Reconext, lea el valor actual y envíelo a KNX (predeterminado: no) |
+
+**Cartografía**
+
+| Propiedad | Descripción |
+|-|-|
+|Temperatura |KNX GA para la temperatura en Celsius.DPT recomendado: <b> 9.001 </b> |
+
+##### salidas
+
+1. Salida estándar
+: `msg.payload` (número): temperatura actual en ° C
+
+##### Detalles
+
+`msg.payload` lleva el valor de temperatura numérica.
+
+---
+
+<span id="hue-controller-docs-humidity" data-hue-controller-type="humidity"></span>
+
+## Humedad (`humidity`)
+
+Este nodo lee la humedad relativa (%) de un sensor de humedad Hue y lo asigna a KNX.
+
+Comience a escribir en el campo GA (nombre o dirección de grupo) para vincular el KNX GA;Los dispositivos aparecen mientras escribe.
+
+**General**
+
+| Propiedad | Descripción |
+|-|-|
+|KNX GW |Seleccione la puerta de enlace KNX para ser utilizada |
+|Hue Bridge |Seleccione la Hue Bridge que se utilizará |
+|Sensor Hue |Sensor de humedad Hue (autocompletado mientras se escribe) |
+|Leer el estado al inicio |En Startup/Reconext, lea el valor actual y envíelo a KNX (predeterminado: no) |
+
+**Cartografía**
+
+| Propiedad | Descripción |
+|-|-|
+|Humedad |KNX GA para la humedad relativa %.DPT recomendado: <b> 9.007 </b> |
+
+##### salidas
+
+1. Salida estándar
+: `msg.payload` (número): humedad relativa actual en %
+
+##### Detalles
+
+`msg.payload` lleva el valor de humedad numérica (porcentaje).
+
+---
+
+<span id="hue-controller-docs-scene" data-hue-controller-type="scene"></span>
+
+## Escena (`scene`)
+
+El nodo **Hue Scene** expone las escenas Hue a KNX y puede reenviar los eventos Hue sin procesar a un flujo de Node-RED. El campo de escena admite autocompletado; use el icono de actualización después de añadir escenas al Hue Bridge para mantener la lista actualizada.
+
+##### pestañas de un vistazo
+
+- **Mapeo** - Enlace las direcciones de grupo KNX a la escena Hue seleccionada.DPT 1.xxx realiza un retiro booleano, mientras que DPT 18.xxx envía un número de escena KNX.
+- **Multi Scene** - Cree una lista de reglas que asocie los números de escena KNX con diferentes escenas Hue y elige si cada escena se recuerda como _Active_, _Dynamic \ _palette_ o _static_.
+- **Comportamiento** - Alternar el pin de salida de Node-RED.Cuando no se configura la puerta de enlace KNX, el PIN permanece habilitado para que los eventos del puente aún alcancen el flujo.
+
+##### Configuración general
+
+| Propiedad | Descripción |
+|-|-|
+|KNX GW |KNX Gateway que suministra el catálogo de direcciones utilizado para autocompletar.|
+|Hue Bridge |Hue Bridge que alberga las escenas.|
+|Escena Hue |Escena para recuperar (Autocompletar; Refresh Button Recargue el catálogo del puente).|
+
+Pestaña de mapeo ###
+
+| Propiedad | Descripción |
+|-|-|
+|Recordar |Dirección del grupo KNX que recuerda la escena.Use DPT 1.xxx para el control booleano o DPT 18.xxx para transmitir un número de escena KNX.|
+|DPT |DataPoint utilizado con el GA de recuperación (1.xxx o 18.001).|
+|Nombre |Etiqueta amistosa para el retiro GA.|
+|# |Aparece cuando se elige una escena KNX DPT;Seleccione el número de escena KNX para enviar.|
+|Estado GA |GA booleano opcional que refleja si la escena está actualmente activa.|
+
+##### Pestaña de escena múltiple
+
+| Propiedad | Descripción |
+|-|-|
+|Recordar |KNX GA (DPT 18.001) que selecciona escenas por número.|
+|Selector de escenas |Lista editable que mapea los números de escena KNX a las escenas de Hue con el modo de recuperación deseado.Arrastres maneja entradas de reorden.|
+
+> ℹ️ Los widgets específicos de KNX solo aparecen después de que se selecciona una puerta de enlace KNX.Las pestañas de mapeo permanecen ocultas hasta que se configuran tanto el puente como la puerta de enlace.
+
+---
+
+<span id="hue-controller-docs-device_power" data-hue-controller-type="device_power"></span>
+
+## Batería (`device_power`)
+
+Este nodo expone el nivel de batería de un dispositivo HUE a KNX y plantea un evento cada vez que cambia el valor.
+
+Comience a escribir el nombre del dispositivo KNX o la dirección de grupo en el campo GA;Las entradas coincidentes aparecen mientras escribe.Use el icono de actualización junto al sensor de Hue </Q> para recargar la lista desde el puente HUE después de agregar nuevos dispositivos.
+
+**General**
+
+| Propiedad | Descripción |
+|-|-|
+|KNX GW |KNX Gateway solía publicar el nivel de la batería (requerido antes de que aparezcan los campos de mapeo KNX).|
+|Hue Bridge |Hue Bridge que aloja el dispositivo.|
+|Sensor de batería Hue |Dispositivo/sensor Hue que proporciona el nivel de la batería (admite autocompletar y actualizar).|
+
+**Cartografía**
+
+| Propiedad | Descripción |
+|-|-|
+|Nivel |KNX GA para el porcentaje de batería (0-100%).DPT recomendado: <b> 5.001 </b>.|
+
+**Comportamiento**
+
+| Propiedad | Descripción |
+|-|-|
+|Leer el estado al inicio |En implementar/reconectar, lea el valor actual de la batería y publíquelo en KNX.Valor predeterminado: "Sí".|
+|Pin de salida del nodo |Mostrar u ocultar la salida de Node-RED.Cuando no se selecciona la puerta de enlace KNX, la salida permanece habilitada, por lo que los eventos Hue continúan alcanzando el flujo.|
+
+> ℹ️ KNX Mapping Widgets permanece oculto hasta que se selecciona una puerta de enlace KNX.Esto mantiene el editor ordenado cuando el nodo se usa solo para reenviar los eventos de Hue en Node-RED.
+
+---
+
+<span id="hue-controller-docs-zigbee_connectivity" data-hue-controller-type="zigbee_connectivity"></span>
+
+## Conectividad Zigbee (`zigbee_connectivity`)
+
+Este nodo recupera el estado de conectividad Zigbee de un dispositivo Hue y lo expone a KNX.
+
+Comience a escribir el nombre del dispositivo KNX o la dirección de grupo en el campo GA;Aparecen sugerencias mientras escribe.
+
+**General**
+
+| Propiedad | Descripción |
+|-|-|
+|KNX GW |KNX Gateway solía publicar el estado.|
+|Hue Bridge |Hue Bridge para la consulta.|
+|Conectividad Hue zigbee |Sensor/dispositivo Hue que proporciona la información de conectividad Zigbee.Autocompletar mientras se escribe.|
+
+**Cartografía**
+
+| Propiedad | Descripción |
+|-|-|
+|Estado |Dirección de grupo KNX que refleja la conectividad Zigbee.Se convierte en _true_ cuando está conectado, de lo contrario _false_.|
+|Leer el estado al inicio |Lee el estado actual en el editor inicial/reconexión y emite a KNX.Valor predeterminado: "Sí".|
+
+##### salidas
+
+1. Salida estándar
+: carga útil (boolean): estado de conectividad.
+
+##### Detalles
+
+`msg.payload` lleva el estado booleano (verdadero/falso). \
+`msg.status` contiene un estado textual: uno de **conectado, desconectado, conectividad \ _SISMO, unidireccional \ _Incoming** .
+
+---
+
+<span id="hue-controller-docs-device_software_update" data-hue-controller-type="device_software_update"></span>
+
+## Actualización de software (`device_software_update`)
+
+Este nodo monitorea si un dispositivo de Hue seleccionado tiene una actualización de software disponible y publica el estado a KNX.
+
+Comience a escribir el nombre o la dirección de grupo de su dispositivo KNX en el campo GA, los dispositivos avaiables comienzan a aparecer mientras
+Estás escribiendo.
+
+**General**
+
+| Propiedad | Descripción |
+|-|-|
+|KNX GW |Seleccione la puerta de enlace KNX para ser utilizada |
+|Hue Bridge |Seleccione la Hue Bridge que se utilizará |
+|Dispositivo para Hue |Dispositivo de Hue para monitorear las actualizaciones de software (autocompletar mientras escribe). |
+
+**Cartografía**
+
+|Propiedad |Descripción |
+|-|-|
+|Estado |KNX GA refleja el estado de actualización._true_ Si una actualización está disponible/lista/está instalada, de lo contrario _false_.|
+|Leer el estado al inicio |Lea el estado actual al inicio/reconexión y emita a KNX (predeterminado "sí").|
+
+##### salidas
+
+1. Salida estándar
+: carga útil (boolean): indicador de actualización.
+: status (string): uno de **no \ _Update, actualizar \ _pending, listo \ _to \ _install, instalación** .
+
+<!-- HUE_CONTROLLER_PROFILE_DOCS_END -->

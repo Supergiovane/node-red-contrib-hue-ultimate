@@ -1,0 +1,59 @@
+[
+  {
+    "id": "hue_topic_motion_tab",
+    "type": "tab",
+    "label": "HUE motion · Node-RED",
+    "disabled": false,
+    "info": "Select your Hue Bridge and a motion resource. Leave KNX Gateway empty; enable output pins. Presence changes arrive with msg.topic = hallway/motion and a boolean msg.payload. RAW Hue messages may also appear in Debug. No KNX package is required."
+  },
+  {
+    "id": "hue_topic_motion_help",
+    "type": "comment",
+    "z": "hue_topic_motion_tab",
+    "name": "Setup: open this comment before Deploy",
+    "info": "Select your Hue Bridge and a motion resource. Leave KNX Gateway empty; enable output pins. Presence changes arrive with msg.topic = hallway/motion and a boolean msg.payload. RAW Hue messages may also appear in Debug. No KNX package is required.",
+    "x": 340,
+    "y": 60,
+    "wires": []
+  },
+  {
+    "id": "hue_topic_motion_device",
+    "type": "hueUltimateController",
+    "z": "hue_topic_motion_tab",
+    "name": "Hallway motion",
+    "server": "",
+    "enableNodePINS": "yes",
+    "inputs": 0,
+    "outputs": 1,
+    "readStatusAtStartup": "no",
+    "specifySwitchOnBrightness": "no",
+    "enableDayNightLighting": "no",
+    "x": 480,
+    "y": 200,
+    "wires": [
+      [
+        "hue_topic_motion_debug"
+      ]
+    ],
+    "serverHue": "",
+    "hueControllerType": "motion",
+    "hueDevice": "",
+    "GAmotion": "hallway/motion",
+    "dptmotion": ""
+  },
+  {
+    "id": "hue_topic_motion_debug",
+    "type": "debug",
+    "z": "hue_topic_motion_tab",
+    "name": "Messages / states",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "true",
+    "targetType": "full",
+    "x": 760,
+    "y": 200,
+    "wires": []
+  }
+]

@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 280" width="1120" height="280" role="img" aria-labelledby="title desc">
+ <title id="title">HUE Ultimate</title>
+ <desc id="desc">Original HUE Ultimate logo: a connected home with a warm multicolour light.</desc>
+ <defs>
+ <linearGradient id="background" x2="1" y2="1"><stop stop-color="#142C43"/><stop offset="1" stop-color="#091522"/></linearGradient>
+ <radialGradient id="aura"><stop stop-color="#F4C563" stop-opacity=".12"/><stop offset="1" stop-color="#F4C563" stop-opacity="0"/></radialGradient>
+ <linearGradient id="light" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#F9DE85"/><stop offset=".52" stop-color="#F6AE62"/><stop offset="1" stop-color="#E284AB"/></linearGradient>
+ </defs>
+ <rect width="1120" height="280" rx="28" fill="url(#background)"/>
+ <ellipse cx="156" cy="133" rx="240" ry="138" fill="url(#aura)"/>
+ <rect x="12" y="12" width="1096" height="256" rx="19" fill="none" stroke="#F4C563" stroke-opacity=".22"/>
+ <g transform="translate(46 36)"><path d="M28 89 100 27l72 62v87H28Z" fill="#102337" stroke="#F4C563" stroke-width="9" stroke-linejoin="round"/><path d="M80 130c0-12-15-16-15-36a35 35 0 0 1 70 0c0 20-15 24-15 36" fill="url(#light)"/>
+  <path d="M83 137h34m-29 12h24" stroke="#FBE9BB" stroke-width="7" stroke-linecap="round"/>
+  <path d="M100 76v37m-14-25 14 14 14-14" fill="none" stroke="#102337" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></g>
+ <path d="M267 58v164" stroke="#F4C563" stroke-opacity=".28"/>
+ <g font-family="Arial, Helvetica, sans-serif">
+  <text x="307" y="81" fill="#FBE9BB" font-size="15" font-weight="700" letter-spacing="3">MAX SUPERVIBE · NODE-RED</text>
+  <text x="302" y="163" fill="#F4C563" font-size="70" font-weight="700" letter-spacing="-2">HUE</text>
+  <text x="478" y="163" fill="#F8FAFC" font-size="70" font-weight="700" letter-spacing="-2">ULTIMATE</text>
+  <text x="307" y="207" fill="#B6C4D1" font-size="16" letter-spacing="2.1">LIGHTS. SENSORS. ONE CONTROLLER.</text>
+ </g>
+ </svg>

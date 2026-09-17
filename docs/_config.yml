@@ -1,0 +1,16 @@
+title: "HUE Ultimate"
+description: "HUE Ultimate for Node-RED · Node-RED messages with optional native KNX Ultimate integration"
+url: "https://supergiovane.github.io"
+baseurl: "/node-red-contrib-hue-ultimate"
+repository_url: "https://github.com/Supergiovane/node-red-contrib-hue-ultimate"
+package_name: "node-red-contrib-hue-ultimate"
+markdown: kramdown
+kramdown:
+  input: GFM
+exclude:
+  - wiki
+  - README.md
+  - Gemfile
+  - Gemfile.lock
+  - vendor
+  - _site

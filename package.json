@@ -1,0 +1,87 @@
+{
+  "engines": {
+    "node": ">=20.18.1"
+  },
+  "author": {
+    "name": "Massimo Saccani",
+    "email": "maxsupergiovane@icloud.com",
+    "url": "https://youtube.com/@maxsupervibe"
+  },
+  "license": "MIT",
+  "name": "node-red-contrib-hue-ultimate",
+  "version": "1.0.0-beta.0",
+  "description": "Philips Hue for Node-RED, with optional KNX Ultimate integration.",
+  "files": [
+    "nodes/hueUltimateController.js",
+    "nodes/hueUltimateController.html",
+    "nodes/hue-ultimate-config.js",
+    "nodes/hue-ultimate-config.html",
+    "nodes/hueUltimate-admin.js",
+    "nodes/plugins/",
+    "nodes/utils/",
+    "nodes/icons/",
+    "nodes/locales/*/hueUltimateController.*",
+    "nodes/locales/*/hue-ultimate-config.*",
+    "resources/",
+    "examples/",
+    "README.md",
+    "MIGRATION.md",
+    "CHANGELOG.md",
+    "LICENSE",
+    "docs/assets/brand/"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Supergiovane/node-red-contrib-hue-ultimate.git"
+  },
+  "keywords": [
+    "node-red",
+    "hue",
+    "ultimate",
+    "home-automation"
+  ],
+  "dependencies": {
+    "lodash": "4.18.1",
+    "simple-get": "4.0.1",
+    "winston": "^3.17.0"
+  },
+  "devDependencies": {
+    "chai": "^4.3.10",
+    "mocha": "^10.4.0",
+    "knxultimate": "6.0.6"
+  },
+  "node-red": {
+    "version": ">=3.1.1",
+    "plugins": {
+      "hueUltimateAdmin": "/nodes/hueUltimate-admin.js",
+      "hueUltimateMigration": "/nodes/plugins/hueUltimate-migration.html"
+    },
+    "nodes": {
+      "hueUltimateController": "/nodes/hueUltimateController.js",
+      "hue-ultimate-config": "/nodes/hue-ultimate-config.js"
+    }
+  },
+  "scripts": {
+    "test": "npm run hue-controller:check && mocha \"test/**/*.test.js\" && node scripts/check-node-load.js",
+    "test:unit": "mocha \"test/**/*.test.js\"",
+    "hue-controller:generate": "node scripts/generate-hue-controller-profiles.js",
+    "hue-controller:check": "node scripts/generate-hue-controller-profiles.js --check",
+    "docs:prepare": "node scripts/prepare-docs.js",
+    "docs:build": "npm run docs:prepare && jekyll build --source docs --destination docs/_site",
+    "docs:serve": "npm run docs:prepare && jekyll serve --source docs --destination docs/_site --host 127.0.0.1"
+  },
+  "peerDependencies": {
+    "node-red-contrib-knx-ultimate": ">=7.1.1"
+  },
+  "peerDependenciesMeta": {
+    "node-red-contrib-knx-ultimate": {
+      "optional": true
+    }
+  },
+  "homepage": "https://supergiovane.github.io/node-red-contrib-hue-ultimate/",
+  "publishConfig": {
+    "access": "public",
+    "tag": "beta",
+    "registry": "https://registry.npmjs.org/"
+  }
+}
