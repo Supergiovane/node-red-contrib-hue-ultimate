@@ -9,7 +9,7 @@
   },
   "license": "MIT",
   "name": "node-red-contrib-hue-ultimate",
-  "version": "1.0.0-beta.0",
+  "version": "1.0.0-beta.1",
   "description": "Philips Hue for Node-RED, with optional KNX Ultimate integration.",
   "files": [
     "nodes/hueUltimateController.js",

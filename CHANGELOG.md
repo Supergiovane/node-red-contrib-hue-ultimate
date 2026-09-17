@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.0.0-beta.0
+## 1.0.0-beta.1
 
 - First public beta. One HUE Controller for lights, scenes, buttons and sensors.
 - Works with Node-RED messages and offers native integration with KNX Ultimate.
