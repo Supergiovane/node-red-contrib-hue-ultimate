@@ -220,36 +220,36 @@
         {
           "type": "page",
           "labels": {
-            "en": "Control Matter from KNX (BETA)",
-            "it": "Control Matter from KNX (BETA)",
-            "de": "Control Matter from KNX (BETA)",
-            "fr": "Control Matter from KNX (BETA)",
-            "es": "Control Matter from KNX (BETA)",
-            "zh": "从 KNX 控制 Matter (BETA)"
+            "en": "Control Matter from KNX",
+            "it": "Control Matter from KNX",
+            "de": "Control Matter from KNX",
+            "fr": "Control Matter from KNX",
+            "es": "Control Matter from KNX",
+            "zh": "从 KNX 控制 Matter"
           },
           "page": "Control Matter from KNX"
         },
         {
           "type": "page",
           "labels": {
-            "en": "Matter Bridge (BETA)",
-            "it": "Bridge Matter (BETA)",
-            "de": "Matter Bridge (BETA)",
-            "fr": "Bridge Matter (BETA)",
-            "es": "Bridge Matter (BETA)",
-            "zh": "Matter 桥接器 (BETA)"
+            "en": "Matter Bridge",
+            "it": "Bridge Matter",
+            "de": "Matter Bridge",
+            "fr": "Bridge Matter",
+            "es": "Bridge Matter",
+            "zh": "Matter 桥接器"
           },
           "page": "Matter-Bridge-Configuration"
         },
         {
           "type": "page",
           "labels": {
-            "en": "Expose KNX to Matter (BETA)",
-            "it": "Expose KNX to Matter (BETA)",
-            "de": "Expose KNX to Matter (BETA)",
-            "fr": "Expose KNX to Matter (BETA)",
-            "es": "Expose KNX to Matter (BETA)",
-            "zh": "将 KNX 暴露到 Matter (BETA)"
+            "en": "Expose KNX to Matter",
+            "it": "Expose KNX to Matter",
+            "de": "Expose KNX to Matter",
+            "fr": "Expose KNX to Matter",
+            "es": "Expose KNX to Matter",
+            "zh": "将 KNX 暴露到 Matter"
           },
           "page": "Matter-Bridge"
         }
