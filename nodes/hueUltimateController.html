@@ -68,6 +68,25 @@
             ? (emptyValues.has(stored.toLowerCase()) ? '' : stored)
             : selected;
         };
+    const cloneEditorValue = editorSelection && typeof editorSelection.cloneEditorValue === 'function'
+      ? editorSelection.cloneEditorValue
+      : (value) => {
+          if (value === undefined || value === null || typeof value !== 'object') return value;
+          try { return JSON.parse(JSON.stringify(value)); } catch (error) { return value; }
+        };
+    const createEditorDraft = editorSelection && typeof editorSelection.createEditorDraft === 'function'
+      ? editorSelection.createEditorDraft
+      : (node, defaults) => {
+          const draft = Object.create(node || {});
+          Object.entries(defaults || {}).forEach(([key, property]) => {
+            const value = Object.prototype.hasOwnProperty.call(node || {}, key) ? node[key] : property?.value;
+            draft[key] = cloneEditorValue(value);
+          });
+          return draft;
+        };
+    // Let Node-RED's property pane commit config-node references. Besides
+    // detecting the edit, it maintains each config node's `users` collection.
+    const CONTROLLER_CONFIG_NODE_FIELDS = new Set(['server', 'serverHue']);
 
     const getProfileDefinition = (controllerType) => {
       // The bundle captures a private definition through a RED facade. It does
@@ -311,11 +330,17 @@
       oneditprepare() {
         try { RED.sidebar.show('help'); } catch (error) { /* empty */ }
         ensureControllerEditorStyle();
-        const controllerNode = this;
+        const persistedNode = this;
+        const editorDefaults = buildDefaults();
+        // Profile editors need a mutable node-shaped object while the dialog is
+        // open. Keep that preview state off the persisted node: Node-RED compares
+        // the persisted values only after oneditsave to set dirty/history state.
+        const controllerNode = createEditorDraft(persistedNode, editorDefaults);
         // activeProfile/legacyContext describe the currently mounted function.
         // Drafts preserve unsaved edits when the user switches away and back;
         // the migration closer prevents detached jQuery dialogs and handlers.
         let activeProfile;
+        let activeControllerType;
         let legacyContext;
         let closeMigrationDialog = () => { };
         const profileDrafts = {};
@@ -346,28 +371,20 @@
           });
         }
 
-        const cloneEditorValue = (value) => {
-          // Profile defaults may contain arrays or objects. Clone them before
-          // drafting so editing one function cannot mutate shared definitions.
-          if (value === undefined || value === null || typeof value !== 'object') return value;
-          try { return JSON.parse(JSON.stringify(value)); } catch (error) { return value; }
-        };
-
-        // Several profile editors update the live node object while the dialog
-        // is open so switching device functions can mount the correct fields.
-        // Node-RED cannot roll those direct mutations back by itself on Cancel,
-        // therefore retain the complete persisted defaults before editing.
+        // Retain a final safety snapshot for profile callbacks that might reach
+        // the persisted node indirectly through Node-RED APIs. Normal previews
+        // are isolated in controllerNode and never require rollback.
         const originalEditorState = {};
-        Object.keys(buildDefaults()).forEach((key) => {
+        Object.keys(editorDefaults).forEach((key) => {
           originalEditorState[key] = {
-            present: Object.prototype.hasOwnProperty.call(controllerNode, key),
-            value: cloneEditorValue(controllerNode[key])
+            present: Object.prototype.hasOwnProperty.call(persistedNode, key),
+            value: cloneEditorValue(persistedNode[key])
           };
         });
         const restoreOriginalEditorState = () => {
           Object.entries(originalEditorState).forEach(([key, snapshot]) => {
-            if (snapshot.present) controllerNode[key] = cloneEditorValue(snapshot.value);
-            else delete controllerNode[key];
+            if (snapshot.present) persistedNode[key] = cloneEditorValue(snapshot.value);
+            else delete persistedNode[key];
           });
         };
 
@@ -375,7 +392,8 @@
           // Collect before unmounting. Exact keys come from the selected private
           // definition, avoiding broad DOM scans and widget-added CSS classes.
           if (!activeProfile || !legacyContext) return;
-          const definition = getProfileDefinition(controllerNode.hueControllerType);
+          const mountedControllerType = activeControllerType || controllerNode.hueControllerType;
+          const definition = getProfileDefinition(mountedControllerType);
           const draft = {};
           Object.keys(definition?.defaults || {}).forEach((key) => {
             const fieldValue = readFieldValue($(`#node-input-${key}`), controllerNode[key]);
@@ -389,7 +407,7 @@
             legacyContext[key] = value;
             draft[key] = cloneEditorValue(value);
           });
-          profileDrafts[controllerNode.hueControllerType] = draft;
+          profileDrafts[mountedControllerType] = draft;
           if (Number.isFinite(Number(legacyContext.inputs))) controllerNode.inputs = Number(legacyContext.inputs);
           if (Number.isFinite(Number(legacyContext.outputs))) controllerNode.outputs = Number(legacyContext.outputs);
         };
@@ -401,9 +419,15 @@
           if (!activeProfile || !legacyContext) return;
           $('#node-input-server').off('.hueUltimateControllerLightVisibility');
           $(document).off('change.hueUltimateControllerKnxVisibility', '#node-input-server');
-          const definition = getProfileDefinition(controllerNode.hueControllerType);
-          if (definition && typeof definition.oneditcancel === 'function') {
-            definition.oneditcancel.call(legacyContext);
+          const definition = getProfileDefinition(activeControllerType || controllerNode.hueControllerType);
+          try {
+            if (definition && typeof definition.oneditcancel === 'function') {
+              definition.oneditcancel.call(legacyContext);
+            }
+          } finally {
+            activeProfile = undefined;
+            activeControllerType = undefined;
+            legacyContext = undefined;
           }
         };
 
@@ -702,6 +726,7 @@
           }
 
           activeProfile = profile;
+          activeControllerType = controllerType;
           controllerNode.hueControllerType = controllerType;
           // Some dedicated definitions used fixed pins, others persisted them.
           // Normalize both forms into per-instance numeric Controller pins.
@@ -862,6 +887,8 @@
           });
 
         this._hueControllerCollectEditor = collectCurrentEditor;
+        this._hueControllerGetEditorDraft = () => controllerNode;
+        this._hueControllerGetActiveControllerType = () => activeControllerType;
         this._hueControllerGetLegacyContext = () => legacyContext;
         this._hueControllerGetProfile = () => activeProfile;
         this._hueControllerCloseMigration = () => closeMigrationDialog();
@@ -891,19 +918,35 @@
         const legacyContext = typeof this._hueControllerGetLegacyContext === 'function'
           ? this._hueControllerGetLegacyContext()
           : undefined;
-        const definition = profile ? getProfileDefinition(this.hueControllerType) : undefined;
+        const editorDraft = typeof this._hueControllerGetEditorDraft === 'function'
+          ? this._hueControllerGetEditorDraft()
+          : undefined;
+        const activeControllerType = typeof this._hueControllerGetActiveControllerType === 'function'
+          ? this._hueControllerGetActiveControllerType()
+          : undefined;
+        const selectedControllerType = editorDraft?.hueControllerType || this.hueControllerType;
+        const definition = profile ? getProfileDefinition(activeControllerType || selectedControllerType) : undefined;
         if (definition && typeof definition.oneditsave === 'function') {
           definition.oneditsave.call(legacyContext || this);
         }
         if (legacyContext) {
           Object.keys(definition?.defaults || {}).forEach((key) => {
-            if (Object.prototype.hasOwnProperty.call(legacyContext, key)) this[key] = legacyContext[key];
+            // Config-node references must remain at their persisted values until
+            // Node-RED applies the form. That native path updates dirty state,
+            // history and the old/new config nodes' user associations together.
+            if (CONTROLLER_CONFIG_NODE_FIELDS.has(key)) return;
+            if (Object.prototype.hasOwnProperty.call(legacyContext, key)) {
+              this[key] = cloneEditorValue(legacyContext[key]);
+            }
           });
           if (Number.isFinite(Number(legacyContext.inputs))) this.inputs = Number(legacyContext.inputs);
           if (Number.isFinite(Number(legacyContext.outputs))) this.outputs = Number(legacyContext.outputs);
         }
+        if (editorDraft) this.hueControllerType = selectedControllerType;
         if (typeof this._hueControllerCleanupDevice === 'function') this._hueControllerCleanupDevice();
         delete this._hueControllerCollectEditor;
+        delete this._hueControllerGetEditorDraft;
+        delete this._hueControllerGetActiveControllerType;
         delete this._hueControllerGetLegacyContext;
         delete this._hueControllerGetProfile;
         delete this._hueControllerCloseMigration;
@@ -911,8 +954,9 @@
         delete this._hueControllerCleanupDevice;
       },
       oneditcancel() {
-        // Cancel releases profile-owned editor state and restores the snapshot
-        // taken before device/profile previews mutated the live node object.
+        // Cancel releases profile-owned editor state. The persisted node should
+        // still match its opening snapshot because previews use an isolated
+        // draft; restore the snapshot as a guard against indirect mutations.
         if (typeof this._hueControllerCloseMigration === 'function') this._hueControllerCloseMigration();
         const profile = typeof this._hueControllerGetProfile === 'function'
           ? this._hueControllerGetProfile()
@@ -920,13 +964,18 @@
         const legacyContext = typeof this._hueControllerGetLegacyContext === 'function'
           ? this._hueControllerGetLegacyContext()
           : undefined;
-        const definition = profile ? getProfileDefinition(this.hueControllerType) : undefined;
+        const activeControllerType = typeof this._hueControllerGetActiveControllerType === 'function'
+          ? this._hueControllerGetActiveControllerType()
+          : undefined;
+        const definition = profile ? getProfileDefinition(activeControllerType || this.hueControllerType) : undefined;
         if (definition && typeof definition.oneditcancel === 'function') {
           definition.oneditcancel.call(legacyContext || this);
         }
         if (typeof this._hueControllerCleanupDevice === 'function') this._hueControllerCleanupDevice();
         if (typeof this._hueControllerRestoreOriginalState === 'function') this._hueControllerRestoreOriginalState();
         delete this._hueControllerCollectEditor;
+        delete this._hueControllerGetEditorDraft;
+        delete this._hueControllerGetActiveControllerType;
         delete this._hueControllerGetLegacyContext;
         delete this._hueControllerGetProfile;
         delete this._hueControllerCloseMigration;

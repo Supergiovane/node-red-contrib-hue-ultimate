@@ -11,6 +11,7 @@ const {
 const hueControllerProfiles = require('../resources/hueControllerProfiles')
 const hueControllerMigrationDialog = require('../resources/hueControllerMigrationDialog')
 const {
+  createEditorDraft,
   normalizeSelection: normalizeEditorConfigSelection,
   resolveSelectedOrStoredSelection,
   shouldPreserveStoredSelection
@@ -166,6 +167,38 @@ describe('Unified HUE Controller', () => {
       expect(definition.defaults.serverHue.type, `${controllerType} Hue config`).to.equal('hue-ultimate-config')
       expect(template, `${controllerType} template`).to.be.a('string').and.include('node-input-hueDevice')
       expect(definition._('common.knx_gw'), `${controllerType} Italian translation`).to.equal('Gateway KNX')
+    })
+  })
+
+  it('declares every dynamically mounted profile control as persisted editor state', () => {
+    const RED = {
+      nodes: { node: () => undefined },
+      _: (key) => key,
+      settings: { lang: 'en' }
+    }
+    const lifecycleOnlyDefaults = new Set(['inputs', 'outputs', 'hueDeviceObject', 'rules'])
+
+    supportedTypes.forEach((controllerType) => {
+      const definition = hueControllerProfiles.getDefinition(controllerType, RED)
+      const defaults = new Set(Object.keys(definition.defaults || {}))
+      const template = fs.readFileSync(path.join(
+        projectRoot,
+        'scripts/hue-controller-profiles/templates',
+        `${controllerType}.html`
+      ), 'utf8')
+      const controlKeys = [...template.matchAll(
+        /<(?:input|select|textarea)\b[^>]*\bid=["']node-input-([^"']+)["'][^>]*>/gi
+      )].map((match) => match[1])
+
+      expect(controlKeys, `${controllerType} duplicate control ids`).to.have.length(new Set(controlKeys).size)
+      expect(
+        controlKeys.filter((key) => !defaults.has(key)),
+        `${controllerType} controls missing from defaults`
+      ).to.deep.equal([])
+      expect(
+        [...defaults].filter((key) => !controlKeys.includes(key) && !lifecycleOnlyDefaults.has(key)),
+        `${controllerType} defaults missing a form control or lifecycle handler`
+      ).to.deep.equal([])
     })
   })
 
@@ -813,19 +846,71 @@ describe('Unified HUE Controller', () => {
     expect(tutorialLink).to.be.lessThan(gatewayField)
     expect(editor).to.include('catalogDefaults: {')
     expect(editor).to.include('prepareProfileValues(nextType, getProfileDefinition(nextType))')
-    expect(editor).to.include('profileDrafts[controllerNode.hueControllerType] = draft')
+    expect(editor).to.include('profileDrafts[mountedControllerType] = draft')
+    expect(editor).to.include('const persistedNode = this')
+    expect(editor).to.include('createEditorDraft(persistedNode, editorDefaults)')
+    expect(editor).to.include('this._hueControllerGetEditorDraft = () => controllerNode')
+    expect(editor).to.include('this._hueControllerGetActiveControllerType = () => activeControllerType')
+    expect(editor).to.include('getProfileDefinition(activeControllerType || controllerNode.hueControllerType)')
+    expect(editor).to.include('getProfileDefinition(activeControllerType || selectedControllerType)')
+    expect(editor).to.include('CONTROLLER_CONFIG_NODE_FIELDS.has(key)')
+    expect(editor).to.include('this.hueControllerType = selectedControllerType')
     expect(editor).to.include('const originalEditorState = {}')
-    expect(editor).to.include('Object.keys(buildDefaults()).forEach((key) =>')
-    expect(editor).to.include('present: Object.prototype.hasOwnProperty.call(controllerNode, key)')
+    expect(editor).to.include('Object.keys(editorDefaults).forEach((key) =>')
+    expect(editor).to.include('present: Object.prototype.hasOwnProperty.call(persistedNode, key)')
     expect(editor).to.include('this._hueControllerRestoreOriginalState = restoreOriginalEditorState')
     expect(editor).to.include("if (typeof this._hueControllerRestoreOriginalState === 'function') this._hueControllerRestoreOriginalState()")
-    expect(editor).to.include('if (snapshot.present) controllerNode[key] = cloneEditorValue(snapshot.value)')
-    expect(editor).to.include('else delete controllerNode[key]')
+    expect(editor).to.include('if (snapshot.present) persistedNode[key] = cloneEditorValue(snapshot.value)')
+    expect(editor).to.include('else delete persistedNode[key]')
     const cancelLifecycle = editor.slice(editor.indexOf('oneditcancel() {'), editor.indexOf('</script>', editor.indexOf('oneditcancel() {')))
     expect(cancelLifecycle.indexOf('this._hueControllerCleanupDevice()')).to.be.lessThan(cancelLifecycle.indexOf('this._hueControllerRestoreOriginalState()'))
     expect(editor).not.to.include('legacyContext.type = profile.nodeType')
     supportedTypes.forEach((controllerType) => {
       expect(editor, controllerType).to.include(`${controllerType}: { nodeType:`)
+    })
+  })
+
+  it('isolates Controller device previews from the persisted node until save', () => {
+    const persistedNode = {
+      server: 'knx-old',
+      serverHue: 'hue-old',
+      name: 'Desk light',
+      hueControllerType: 'light',
+      hueDevice: 'light-old#light',
+      hueDeviceObject: { effects: { status_values: ['no_effect'] } },
+      inputs: 1,
+      outputs: 1
+    }
+    const defaults = Object.fromEntries(Object.keys(persistedNode).map((key) => [key, { value: '' }]))
+    const draft = createEditorDraft(persistedNode, defaults)
+
+    draft.server = 'knx-new'
+    draft.serverHue = 'hue-new'
+    draft.name = 'Hall sensor'
+    draft.hueControllerType = 'motion'
+    draft.hueDevice = 'motion-new#motion'
+    draft.hueDeviceObject.effects.status_values.push('prism')
+    draft.inputs = 0
+    draft.outputs = 1
+
+    expect(persistedNode).to.deep.equal({
+      server: 'knx-old',
+      serverHue: 'hue-old',
+      name: 'Desk light',
+      hueControllerType: 'light',
+      hueDevice: 'light-old#light',
+      hueDeviceObject: { effects: { status_values: ['no_effect'] } },
+      inputs: 1,
+      outputs: 1
+    })
+    expect(draft).to.include({
+      server: 'knx-new',
+      serverHue: 'hue-new',
+      name: 'Hall sensor',
+      hueControllerType: 'motion',
+      hueDevice: 'motion-new#motion',
+      inputs: 0,
+      outputs: 1
     })
   })
 
