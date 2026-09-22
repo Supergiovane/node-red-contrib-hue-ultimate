@@ -1018,9 +1018,13 @@ describe('Unified HUE Controller', () => {
     // bootstrap sentinel. Capability discovery must bypass that DOM value and
     // use the actual persisted hue-ultimate-config reference instead.
     expect(privateLightEditor).to.include('const capabilityServerId = resolveHueServerValue({ allowStored: true })')
+    expect(privateLightEditor).to.include('if (!capabilityServerId || !capabilityResourceId)')
+    expect(privateLightEditor).to.include('applyHueCapabilities(node.hueDeviceObject || {})')
+    expect(privateLightEditor).to.include('hueUltimate/knxUltimateGetLightObject?id=${encodeURIComponent(capabilityResourceId)}')
     expect(privateLightEditor).to.include('serverId=${encodeURIComponent(capabilityServerId)}')
     expect(privateLightEditor).not.to.include('knxUltimateGetLightObject?id=" + initialHueDeviceRaw.split("#")[0] + "&serverId=" + $("#node-input-serverHue").val()')
     expect(generatedProfiles).to.include('const capabilityServerId = resolveHueServerValue({ allowStored: true })')
+    expect(generatedProfiles).to.include('hueUltimate/knxUltimateGetLightObject?id=${encodeURIComponent(capabilityResourceId)}')
 
     // This correction belongs only to HUE Controller's private Light editor.
     expect(legacyLightEditor).not.to.include('const capabilityServerId = resolveHueServerValue({ allowStored: true })')
@@ -1033,7 +1037,7 @@ describe('Unified HUE Controller', () => {
     )
     const groupedBranch = privateLightEditor.indexOf("if (selectedHueResourceType === 'grouped_light')")
     const groupedDefaults = privateLightEditor.indexOf("applyHueCapabilities({ type: 'grouped_light' })", groupedBranch)
-    const individualCapabilityRequest = privateLightEditor.indexOf('getJsonPromise = $.getJSON(`knxUltimateGetLightObject', groupedDefaults)
+    const individualCapabilityRequest = privateLightEditor.indexOf('getJsonPromise = $.getJSON(`hueUltimate/knxUltimateGetLightObject', groupedDefaults)
 
     expect(privateLightEditor).to.include("const selectedHueResourceType = String(initialHueDeviceRaw.split('#')[1] || '').trim().toLowerCase()")
     expect(groupedBranch).to.be.greaterThan(-1)

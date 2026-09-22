@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.3
+
+- Fixed the HUE light editor capabilities request after the package split by serving and using the standalone namespaced admin endpoint.
+- Prevented incomplete or migrated nodes without both a Hue bridge and a resource from issuing a failing capabilities request or showing a fixed `Not Found` popup.
+
 ## 1.0.2
 
 - Fixed HUE Controller change detection so selecting a device or editing a dynamically loaded profile enables Deploy.

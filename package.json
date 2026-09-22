@@ -9,7 +9,7 @@
   },
   "license": "MIT",
   "name": "node-red-contrib-hue-ultimate",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Native Philips Hue integration with KNX Ultimate for Node-RED: connect Hue lights, scenes and sensors directly to KNX group addresses through one multimode Controller.",
   "files": [
     "nodes/hueUltimateController.js",

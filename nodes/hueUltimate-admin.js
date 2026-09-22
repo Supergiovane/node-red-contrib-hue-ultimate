@@ -150,6 +150,69 @@ function registerRoutes (RED) {
           res.json('Select the device first!')
         }
       })
+
+  RED.httpAdmin.get('/hueUltimate/knxUltimateGetLightObject', async (req, res) => {
+        const respondError = (status, message) => {
+          res.status(status).json({ error: message })
+        }
+        try {
+          const serverId = typeof req.query.serverId === 'string' ? req.query.serverId.trim() : ''
+          const resourceId = typeof req.query.id === 'string' ? req.query.id.trim() : ''
+          if (!serverId) {
+            respondError(400, 'Hue bridge not specified')
+            return
+          }
+          if (!resourceId) {
+            respondError(400, 'Hue light resource not specified')
+            return
+          }
+
+          const hueServer = RED.nodes.getNode(serverId)
+          if (!hueServer) {
+            respondError(404, 'Hue bridge not found')
+            return
+          }
+
+          let resource
+          if (typeof hueServer.getHueResourceSnapshot === 'function') {
+            try {
+              resource = await hueServer.getHueResourceSnapshot(resourceId, { forceRefresh: false })
+            } catch (error) { /* use the loaded-resource fallback below */ }
+          }
+          if (!resource && Array.isArray(hueServer.hueAllResources)) {
+            resource = hueServer.hueAllResources.find((candidate) => candidate && candidate.id === resourceId)
+          }
+          if (!resource) {
+            respondError(404, 'Hue light resource not found')
+            return
+          }
+
+          // Never decorate the config node's cached resource in place. The
+          // calculated editor-only fields belong only to this HTTP response.
+          const light = { ...resource }
+          try {
+            light.calculatedKelvin = light.color_temperature && light.color_temperature.mirek !== undefined
+              ? hueColorConverter.ColorConverter.mirekToKelvin(light.color_temperature.mirek)
+              : undefined
+          } catch (error) {
+            light.calculatedKelvin = undefined
+          }
+          try {
+            const rgb = hueColorConverter.ColorConverter.xyBriToRgb(
+              light.color.xy.x,
+              light.color.xy.y,
+              light.dimming.brightness
+            )
+            light.calculatedHEXColor = `#${hueColorConverter.ColorConverter.rgbHex(rgb.r, rgb.g, rgb.b).toString()}`
+          } catch (error) {
+            light.calculatedHEXColor = undefined
+          }
+          res.json(light)
+        } catch (error) {
+          if (node.sysLogger) node.sysLogger.error(`Hue capabilities request failed: ${error.message}`)
+          respondError(500, error.message)
+        }
+      })
   
   RED.httpAdmin.post('/hueUltimate/KNXUltimateLocateHueDevice', async (req, res) => {
         const respondError = (status, message) => {

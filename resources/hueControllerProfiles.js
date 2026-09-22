@@ -1415,8 +1415,16 @@
                   // capabilities. Resolve the real persisted config-node ID through
                   // the same helper used by resource discovery and Locate instead.
                   const capabilityServerId = resolveHueServerValue({ allowStored: true })
-                  const capabilityResourceId = initialHueDeviceRaw.split('#')[0]
-                  getJsonPromise = $.getJSON(`knxUltimateGetLightObject?id=${encodeURIComponent(capabilityResourceId)}&serverId=${encodeURIComponent(capabilityServerId)}&_=${Date.now()}`, (data) => {
+                  const capabilityResourceId = String(initialHueDeviceRaw.split('#')[0] || '').trim()
+                  // A migrated or intentionally incomplete node may retain a device
+                  // without a Hue bridge (or vice versa). That is a valid editor
+                  // state: use the persisted snapshot and do not issue a request that
+                  // can only fail while the user is still configuring the node.
+                  if (!capabilityServerId || !capabilityResourceId) {
+                    applyHueCapabilities(node.hueDeviceObject || {})
+                    return
+                  }
+                  getJsonPromise = $.getJSON(`hueUltimate/knxUltimateGetLightObject?id=${encodeURIComponent(capabilityResourceId)}&serverId=${encodeURIComponent(capabilityServerId)}&_=${Date.now()}`, (data) => {
                     try {
                       applyHueCapabilities(data)
                     } catch (error) {
