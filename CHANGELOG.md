@@ -4,6 +4,10 @@
 
 - Fixed the HUE light editor capabilities request after the package split by serving and using the standalone namespaced admin endpoint.
 - Prevented incomplete or migrated nodes without both a Hue bridge and a resource from issuing a failing capabilities request or showing a fixed `Not Found` popup.
+- Reworked the Controller, Hue Bridge help and public documentation in all six languages to present Node-RED topic/payload mappings as the default and KNX as an optional integration.
+- Replaced inherited KNX-specific property descriptions with neutral command, state and mapping labels while preserving legacy flow field names for compatibility.
+- Ensured editor notifications always expose an explicit localized close action, including migration and validation errors.
+- Documented native Philips Hue API v2 input commands placed directly on `msg`, with localized examples and generated help checks.
 
 ## 1.0.2
 

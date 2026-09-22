@@ -110,7 +110,7 @@
     if (!Number.isInteger(convertedCount) || convertedCount < 1) {
       throw new TypeError('Converted HUE node count must be a positive integer')
     }
-    const subject = String(options.subject || 'KNX Ultimate - legacy HUE conversion used')
+    const subject = String(options.subject || 'HUE Ultimate - legacy HUE conversion used')
     const bodyTemplate = String(options.body || 'Hello Massimo,\n\nI used the legacy HUE node conversion button.\nConverted legacy HUE nodes: {{count}}.\n\nOptional notes:\n')
     const body = bodyTemplate.replace(/{{\s*count\s*}}/g, String(convertedCount))
     return `mailto:${MIGRATION_USAGE_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`

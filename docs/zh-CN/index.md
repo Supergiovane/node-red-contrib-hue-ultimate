@@ -21,18 +21,18 @@ npm install node-red-contrib-hue-ultimate
 
 启用输入/输出端口，在命令和状态字段中填写 topic 名称。将 KNX 网关留空；此时不需要 DPT，因此相应字段会隐藏。命令和状态应使用不同的 topic。名称必须精确匹配，不支持通配符。
 
-## KNX 模式
+## 可选 KNX 集成
 
-> **本包也可以与 KNX Ultimate 配合使用。** 集成为原生功能：安装 `node-red-contrib-knx-ultimate` 并选择其网关，即可启用 **KNX 模式**。同一组映射字段将使用组地址和 DPT，并提供已导入 ETS 项目的地址建议。命令和状态直接通过总线传输，这些映射无需额外的 Function 节点。
+> **本包也可以与 KNX Ultimate 配合使用。** 只有需要原生组地址映射时，才安装 `node-red-contrib-knx-ultimate` 并选择其网关。同一组字段随后使用组地址和 DPT，并提供已导入 ETS 项目的地址建议。命令和状态直接通过总线传输，无需额外的 Function 节点。
 
-| 设置 | Node-RED 消息 | KNX 模式 |
+| 设置 | Node-RED 消息 | 可选 KNX 集成 |
 | --- | --- | --- |
 | KNX 网关 | 留空 | 选择已有网关 |
 | 映射字段 | 精确匹配的 topic，例如 `living-room/on` | 组地址，例如 `1/1/1` |
 | DPT | 隐藏且不使用 | 选择正确的数据点类型 |
 | 命令与状态 | 通过 `msg.topic` 和 `msg.payload` | 通过 KNX 总线 |
 
-选择网关时，请将已保存的 topic 替换为实际组地址，并选择正确的 DPT。已选择的网关离线时，节点仍保持 KNX 模式。要恢复使用 Node-RED 消息，请清空网关并重新配置 topic。
+选择网关时，请将已保存的 topic 替换为实际组地址，并选择正确的 DPT。已选择的网关离线时，可选集成仍保持启用。要恢复使用 Node-RED 消息，请清空网关并重新配置 topic。
 
 ## 迁移现有流程
 

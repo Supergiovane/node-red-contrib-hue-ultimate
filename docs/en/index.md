@@ -21,18 +21,18 @@ npm install node-red-contrib-hue-ultimate
 
 Enable the input/output pins and enter topic names in the command and state fields. Leave the KNX gateway empty; DPT fields are hidden because they are not needed. Use separate command and state topics. Matching is exact; wildcards are not supported.
 
-## KNX mode
+## Optional KNX integration
 
-> **You can also use this package with KNX Ultimate.** The integration is native: install `node-red-contrib-knx-ultimate` and select its gateway to enable **KNX mode**. The same mapping fields then use group addresses and DPTs, with suggestions from the imported ETS project. Commands and feedback pass directly over the bus; no intermediate Function node is needed for these mappings.
+> **You can also use this package with KNX Ultimate.** Install `node-red-contrib-knx-ultimate` and select its gateway only when you want native group-address mapping. The same fields then use group addresses and DPTs, with suggestions from the imported ETS project. Commands and feedback pass directly over the bus; no intermediate Function node is needed.
 
-| Setting | Node-RED messages | KNX mode |
+| Setting | Node-RED messages | Optional KNX integration |
 | --- | --- | --- |
 | KNX gateway | Leave empty | Select your existing gateway |
 | Mapping fields | Exact topics, e.g. `living-room/on` | Group addresses, e.g. `1/1/1` |
 | DPT | Hidden; not used | Choose the correct datapoint |
 | Commands and feedback | Via `msg.topic` and `msg.payload` | Via the KNX bus |
 
-When selecting a gateway, replace the saved topics with real group addresses and choose the correct DPTs. A selected gateway that is offline leaves the node in KNX mode. To return to Node-RED messages, clear the gateway and configure the topics again.
+When selecting a gateway, replace the saved topics with real group addresses and choose the correct DPTs. A selected gateway that is offline leaves the optional integration active. To return to Node-RED messages, clear the gateway and configure the topics again.
 
 ## Migrating existing flows
 

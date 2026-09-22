@@ -17,14 +17,14 @@ Seleziona il bridge Hue e la risorsa, abilita i pin e inserisci i topic nei camp
 
 Per esempio: assegna `living-room/brightness` al comando luminosità. Invia `msg.topic = "living-room/brightness"` e `msg.payload = 60`. Assegna un topic distinto allo stato luminosità per ricevere il feedback. Un sensore richiede soltanto il topic di stato e il pin di uscita.
 
-Ogni istanza rappresenta una risorsa selezionata. Aggiungi un altro Controller per un altro dispositivo o per usare un’istanza con i messaggi Node-RED e un’altra in Modalità KNX.
+Ogni istanza rappresenta una risorsa selezionata. Aggiungi un altro Controller per un altro dispositivo o per usare un’istanza con i messaggi Node-RED e un’altra con l’integrazione KNX opzionale.
 
 ## Messaggi e valori
 
 Per On/Off usa i booleani `true` / `false`; per la luminosità un numero da 0 a 100. La temperatura colore usa Kelvin. Le mappature di stato pubblicano il topic configurato e il valore in `msg.payload`. Possono comparire anche eventi RAW: filtra per `msg.topic` per ricevere soltanto gli stati mappati.
 
-## Modalità KNX
+## Integrazione KNX opzionale
 
-**Puoi usare il package anche con KNX Ultimate.** L’integrazione è nativa: installa `node-red-contrib-knx-ultimate` e seleziona il suo gateway per attivare la **Modalità KNX**. Gli stessi campi di mappatura usano quindi indirizzi di gruppo e DPT, con suggerimenti dal progetto ETS importato. Comandi e stati passano direttamente sul bus; per queste mappature non servono nodi Function intermedi.
+**Puoi usare il package anche con KNX Ultimate.** Installa `node-red-contrib-knx-ultimate` e seleziona il suo gateway soltanto quando vuoi la mappatura nativa degli indirizzi di gruppo. Gli stessi campi usano quindi indirizzi di gruppo e DPT, con suggerimenti dal progetto ETS importato. Comandi e stati passano direttamente sul bus; non servono nodi Function intermedi.
 
 [Esempi]({{ "/it/examples.html" | relative_url }})

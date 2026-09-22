@@ -17,14 +17,14 @@ Select the Hue Bridge and resource, enable the pins and enter topics in the comm
 
 For example: map brightness command to `living-room/brightness`. Send `msg.topic = "living-room/brightness"` and `msg.payload = 60`. Map brightness state to a separate topic to receive feedback. A sensor only needs its state topic and output pin.
 
-One node instance represents one selected resource. Add another Controller for another device or to use one instance with Node-RED messages and another in KNX mode.
+One node instance represents one selected resource. Add another Controller for another device or to use one instance with Node-RED messages and another with the optional KNX integration.
 
 ## Messages and values
 
 On/off uses boolean `true` / `false`; brightness uses a number from 0 to 100. Color temperature uses Kelvin. State mappings publish the configured topic with the value in `msg.payload`. RAW events may also appear: filter by `msg.topic` when you only want mapped states.
 
-## KNX mode
+## Optional KNX integration
 
-**You can also use this package with KNX Ultimate.** The integration is native: install `node-red-contrib-knx-ultimate` and select its gateway to enable **KNX mode**. The same mapping fields then use group addresses and DPTs, with suggestions from the imported ETS project. Commands and feedback pass directly over the bus; no intermediate Function node is needed for these mappings.
+**You can also use this package with KNX Ultimate.** Install `node-red-contrib-knx-ultimate` and select its gateway only when you want native group-address mapping. The same fields then use group addresses and DPTs, with suggestions from the imported ETS project. Commands and feedback pass directly over the bus; no intermediate Function node is needed.
 
 [Examples]({{ "/en/examples.html" | relative_url }})

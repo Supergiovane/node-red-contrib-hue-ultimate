@@ -20,6 +20,7 @@
 const fs = require('fs')
 const path = require('path')
 const { profiles, locales } = require('./hue-controller-profiles/catalog')
+const neutralUiText = require('./hue-controller-profiles/neutral-ui-text')
 
 const projectRoot = path.resolve(__dirname, '..')
 const privateSourceRoot = path.join(__dirname, 'hue-controller-profiles')
@@ -31,16 +32,29 @@ const readPrivateProfile = (controllerType) => ({
   template: fs.readFileSync(path.join(privateSourceRoot, 'templates', `${controllerType}.html`), 'utf8').trim()
 })
 
+const applyNeutralUiText = (value, overrides) => {
+  if (Array.isArray(value)) return value.map((entry) => applyNeutralUiText(entry, overrides))
+  if (!value || typeof value !== 'object') return value
+  return Object.fromEntries(Object.entries(value).map(([key, nestedValue]) => {
+    if (typeof nestedValue === 'string' && Object.prototype.hasOwnProperty.call(overrides, key)) {
+      return [key, overrides[key]]
+    }
+    return [key, applyNeutralUiText(nestedValue, overrides)]
+  }))
+}
+
 const readPrivateTranslations = () => {
   const translations = {}
   locales.forEach((locale) => {
+    if (!neutralUiText[locale]) throw new Error(`Missing neutral HUE Controller UI text for locale: ${locale}`)
     translations[locale] = {}
     Object.entries(profiles).forEach(([controllerType, nodeType]) => {
       const localePath = path.join(privateSourceRoot, 'locales', locale, `${controllerType}.json`)
       // Keep dictionaries indexed by the historical namespace. Existing editor
       // code uses keys such as `knxUltimateHueLight.none`; the name is now only
       // an internal namespace and does not require that node type to be loaded.
-      translations[locale][nodeType] = JSON.parse(fs.readFileSync(localePath, 'utf8'))
+      const privateTranslations = JSON.parse(fs.readFileSync(localePath, 'utf8'))
+      translations[locale][nodeType] = applyNeutralUiText(privateTranslations, neutralUiText[locale])
     })
   })
   return translations

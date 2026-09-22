@@ -10,7 +10,7 @@
   "license": "MIT",
   "name": "node-red-contrib-hue-ultimate",
   "version": "1.0.3",
-  "description": "Native Philips Hue integration with KNX Ultimate for Node-RED: connect Hue lights, scenes and sensors directly to KNX group addresses through one multimode Controller.",
+  "description": "Philips Hue integration for Node-RED: control lights, scenes and sensors with messages, with optional native KNX Ultimate mapping.",
   "files": [
     "nodes/hueUltimateController.js",
     "nodes/hueUltimateController.html",
@@ -62,10 +62,12 @@
     }
   },
   "scripts": {
-    "test": "npm run hue-controller:check && mocha \"test/**/*.test.js\" && node scripts/check-node-load.js",
+    "test": "npm run hue-controller:check && npm run hue-controller-help:check && mocha \"test/**/*.test.js\" && node scripts/check-node-load.js",
     "test:unit": "mocha \"test/**/*.test.js\"",
     "hue-controller:generate": "node scripts/generate-hue-controller-profiles.js",
     "hue-controller:check": "node scripts/generate-hue-controller-profiles.js --check",
+    "hue-controller-help:generate": "node scripts/generate-hue-controller-help.js",
+    "hue-controller-help:check": "node scripts/generate-hue-controller-help.js --check",
     "docs:prepare": "node scripts/prepare-docs.js",
     "docs:build": "npm run docs:prepare && jekyll build --source docs --destination docs/_site",
     "docs:serve": "npm run docs:prepare && jekyll serve --source docs --destination docs/_site --host 127.0.0.1"

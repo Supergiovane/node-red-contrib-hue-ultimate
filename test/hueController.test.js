@@ -166,7 +166,56 @@ describe('Unified HUE Controller', () => {
       expect(definition.defaults.server.type, `${controllerType} KNX config`).to.equal('knxUltimate-config')
       expect(definition.defaults.serverHue.type, `${controllerType} Hue config`).to.equal('hue-ultimate-config')
       expect(template, `${controllerType} template`).to.be.a('string').and.include('node-input-hueDevice')
-      expect(definition._('common.knx_gw'), `${controllerType} Italian translation`).to.equal('Gateway KNX')
+      expect(definition._('common.knx_gw'), `${controllerType} Italian translation`).to.equal('Integrazione KNX (opzionale)')
+    })
+  })
+
+  it('mentions KNX in profile UI copy only for the optional integration selector', () => {
+    const optionalWords = {
+      en: 'optional',
+      it: 'opzionale',
+      de: 'optional',
+      fr: 'facultative',
+      es: 'opcional',
+      'zh-CN': '可选'
+    }
+
+    Object.keys(optionalWords).forEach((locale) => {
+      const RED = {
+        nodes: { node: () => undefined },
+        _: (key) => key,
+        settings: { lang: locale }
+      }
+      let knxStringCount = 0
+
+      supportedTypes.forEach((controllerType) => {
+        const localePath = path.join(
+          projectRoot,
+          'scripts',
+          'hue-controller-profiles',
+          'locales',
+          locale,
+          `${controllerType}.json`
+        )
+        const sourceDictionary = JSON.parse(fs.readFileSync(localePath, 'utf8'))
+        const inspect = (value, parts = []) => {
+          if (value && typeof value === 'object') {
+            Object.entries(value).forEach(([key, nestedValue]) => inspect(nestedValue, [...parts, key]))
+            return
+          }
+          if (typeof value !== 'string') return
+          const key = parts.join('.')
+          const translated = hueControllerProfiles.translate(controllerType, key, RED)
+          if (!/knx/i.test(translated)) return
+          knxStringCount++
+          expect(key, `${locale}/${controllerType} KNX copy location`).to.equal('common.knx_gw')
+          expect(translated.toLowerCase(), `${locale}/${controllerType} optional KNX label`)
+            .to.include(optionalWords[locale].toLowerCase())
+        }
+        inspect(sourceDictionary)
+      })
+
+      expect(knxStringCount, `${locale} one optional label per profile`).to.equal(supportedTypes.length)
     })
   })
 
@@ -1364,7 +1413,7 @@ describe('Unified HUE Controller', () => {
     expect(sharedDialog).not.to.include('reserveDonationWindow')
     expect(sharedDialog).not.to.include('donationWindow.location.href')
     expect(sharedDialog).to.include("windowObject.open(donationUrl, '_blank', 'noopener,noreferrer')")
-    expect(sharedDialog).to.include("text: translate('migration_donate', 'Support KNX Ultimate ❤️')")
+    expect(sharedDialog).to.include("text: translate('migration_donate', 'Support HUE Ultimate ❤️')")
     expect((sharedDialog.match(/windowObject\.open\(/g) || [])).to.have.length(1)
     expect(sharedDialog).to.include("RED.actions.invoke('core:cancel-edit-tray')")
     expect(sharedDialog).to.include('Before conversion, the browser automatically starts downloading a JSON backup of all flows.')
@@ -1398,6 +1447,14 @@ describe('Unified HUE Controller', () => {
       es: 'mapeos guardados',
       'zh-CN': '已保存的映射'
     }
+    const localizedOptionalWords = {
+      en: 'optional',
+      it: 'opzionale',
+      de: 'optional',
+      fr: 'facultative',
+      es: 'opcional',
+      'zh-CN': '可选'
+    }
     const wikiMenu = require('../scripts/wiki-menu.json')
     const wikiNavigation = require('../docs/_data/wiki-nav.json')
     const hueMenu = wikiMenu.sections.find((section) => section.key === 'hue')
@@ -1410,6 +1467,14 @@ describe('Unified HUE Controller', () => {
     locales.forEach((locale) => {
       const messages = require(path.join(projectRoot, 'nodes/locales', locale, 'hueUltimateController.json'))
       expect(messages.common, `${locale} common labels`).to.include.keys('knx_gw', 'hue_bridge')
+      expect(messages.common.knx_gw.toLowerCase(), `${locale} optional integration label`)
+        .to.include(localizedOptionalWords[locale].toLowerCase())
+      expect(messages.hueUltimateController.tutorials_link, `${locale} HUE tutorials`)
+        .to.match(/HUE[- ]Ultimate/)
+        .and.not.match(/KNX[- ]Ultimate/)
+      expect(messages.hueUltimateController.migration_donate, `${locale} HUE support action`)
+        .to.include('HUE Ultimate')
+        .and.not.include('KNX Ultimate')
       expect(messages.hueUltimateController.device_function, locale).to.be.a('string').and.not.equal('')
       expect(messages.hueUltimateController.hue_bridge_unreachable, `${locale} bridge unreachable message`).to.be.a('string').and.not.equal('')
       expect(messages.hueUltimateController.hue_bridge_not_ready, `${locale} bridge readiness error`).to.be.a('string').and.not.equal('')
@@ -1443,6 +1508,9 @@ describe('Unified HUE Controller', () => {
         .to.include(localizedBackupWords[locale])
       expect(Object.keys(messages.hueUltimateController.types), locale).to.have.members(supportedTypes)
       expect(fs.existsSync(path.join(projectRoot, 'nodes/locales', locale, 'hueUltimateController.html')), locale).to.equal(true)
+      const bridgeHelp = fs.readFileSync(path.join(projectRoot, 'nodes/locales', locale, 'hue-ultimate-config.html'), 'utf8')
+      expect(bridgeHelp, `${locale} Hue Bridge help`).to.include('HUE Ultimate')
+      expect(bridgeHelp, `${locale} Hue Bridge help is integration-neutral`).not.to.match(/knx/i)
       const wikiName = locale === 'en' ? 'HUE Controller.md' : `${locale}-HUE Controller.md`
       expect(fs.existsSync(path.join(projectRoot, 'docs/wiki', wikiName)), locale).to.equal(true)
       const localizedHelp = fs.readFileSync(path.join(projectRoot, 'nodes/locales', locale, 'hueUltimateController.html'), 'utf8')
@@ -1451,10 +1519,16 @@ describe('Unified HUE Controller', () => {
       const permalinkPrefix = locale === 'en' ? '' : `${locale}-`
       expect(localizedHelp.toLowerCase(), `${locale} help KNX none`).to.include('none')
       expect(localizedWiki.toLowerCase(), `${locale} wiki KNX none`).to.include('none')
+      expect((localizedHelp.match(/knx/gi) || []), `${locale} help keeps KNX optional`).to.have.length.at.most(3)
+      expect((localizedWiki.match(/knx/gi) || []), `${locale} docs keep KNX optional`).to.have.length.at.most(3)
       expect(localizedHelp, `${locale} help light capabilities`).to.include('<code>dimming</code>')
       expect(localizedHelp, `${locale} help colour capabilities`).to.include('<code>color</code>')
+      expect(localizedHelp, `${locale} native Hue API input`).to.match(/Philips[- ]Hue[- ]API[- ]v2/i)
+      expect(localizedHelp, `${locale} native Hue API example`).to.include('msg = { on: { on: true } }')
       expect(localizedWiki, `${locale} docs light capabilities`).to.include('`dimming`')
       expect(localizedWiki, `${locale} docs colour capabilities`).to.include('`color`')
+      expect(localizedWiki, `${locale} docs native Hue API input`).to.match(/Philips[- ]Hue[- ]API[- ]v2/i)
+      expect(localizedWiki, `${locale} docs native Hue API example`).to.include('msg = { on: { on: true } }')
       expect(localizedHelp.toLowerCase(), `${locale} help immediate Light mappings`)
         .to.include(localizedImmediateMappingWords[locale].toLowerCase())
       expect(localizedHelp, `${locale} help fixed red error`).to.include('Node-RED')
@@ -1500,5 +1574,15 @@ describe('Unified HUE Controller', () => {
 
     const canonicalHelp = fs.readFileSync(path.join(projectRoot, 'nodes/hueUltimateController.html'), 'utf8')
     expect((canonicalHelp.match(/data-hue-controller-type=/g) || []), 'canonical profile help').to.have.length(15)
+
+    const readme = fs.readFileSync(path.join(projectRoot, 'README.md'), 'utf8')
+    const bridgeEditor = fs.readFileSync(path.join(projectRoot, 'nodes/hue-ultimate-config.html'), 'utf8')
+    const packageJson = require('../package.json')
+    expect(readme, 'standalone README introduction').to.include('standalone Philips Hue API v2 integration for Node-RED')
+    expect(readme, 'old KNX-first positioning').not.to.include('Native Philips Hue integration with KNX Ultimate')
+    expect(packageJson.description, 'standalone package description').to.match(/^Philips Hue integration for Node-RED:/)
+    expect(packageJson.description, 'optional package integration').to.include('optional native KNX Ultimate mapping')
+    expect(bridgeEditor, 'HUE Bridge tutorial label').to.include('HUE Ultimate video tutorials')
+    expect(bridgeEditor, 'old HUE Bridge tutorial label').not.to.include('KNX-Ultimate video tutorials')
   })
 })

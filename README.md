@@ -6,15 +6,13 @@
   <img src="docs/assets/brand/logo.svg" alt="HUE Ultimate" width="960">
 </p>
 
-## Native Philips Hue integration with KNX Ultimate
+## Philips Hue integration for Node-RED
 
-**HUE Ultimate extends [KNX Ultimate](https://github.com/Supergiovane/node-red-contrib-knx-ultimate) with native Philips Hue integration.** It carries forward the Hue functionality originally included in KNX Ultimate as a dedicated package, keeping Hue commands and feedback directly connected to your KNX installation.
+**HUE Ultimate is a standalone Philips Hue API v2 integration for Node-RED.** Control lights, groups, plugs and scenes, receive button and sensor events, and connect everything through ordinary Node-RED messages.
 
-Its purpose is to serve the KNX Ultimate ecosystem, not to replace or compete with existing general-purpose Hue nodes for Node-RED. Select your KNX Ultimate gateway to map Hue functions to KNX group addresses and DPTs, with suggestions from your imported ETS project.
+The package does not require KNX. Enable the node pins, use `msg.topic` for the selected function and carry its value in `msg.payload`. If your installation also uses [KNX Ultimate](https://github.com/Supergiovane/node-red-contrib-knx-ultimate), you can optionally select its gateway and map the same functions directly to group addresses and DPTs.
 
 One multimode **HUE Controller** handles lights, groups, plugs, scenes, buttons and sensors. Choose a Hue resource and the node shows its supported functions. Controllers share a Hue Bridge configuration.
-
-The node supports standard Node-RED messages: `msg.topic` identifies the function and `msg.payload` carries its value. KNX Ultimate is required only for **KNX mode**; message-based flows work without a KNX gateway.
 
 <br/>
 
@@ -65,9 +63,9 @@ Use booleans for on/off, percentages for brightness, Kelvin for color temperatur
 
 Configured state fields publish their values with the configured topic and `msg.payload`. Existing RAW messages remain supported, and RAW events remain available alongside mapped state messages.
 
-## KNX mode
+## Optional KNX integration
 
-**Native integration with KNX Ultimate is the core purpose of this package.** Install `node-red-contrib-knx-ultimate` and select its gateway to enable **KNX mode**. The same mapping fields then use group addresses and DPTs, with suggestions from the imported ETS project. Commands and feedback pass directly over the bus; no intermediate Function node is needed for these mappings.
+Install `node-red-contrib-knx-ultimate` and select its gateway only when you want native KNX mapping. The same fields then use group addresses and DPTs, with suggestions from the imported ETS project. Commands and feedback pass directly over the bus; no intermediate Function node is needed for these mappings.
 
 When selecting a gateway, replace the saved topics with real group addresses and choose the correct DPTs. A selected gateway that is offline leaves the node in KNX mode. To return to Node-RED messages, clear the gateway and configure the topics again.
 

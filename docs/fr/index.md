@@ -21,18 +21,18 @@ npm install node-red-contrib-hue-ultimate
 
 Activez les entrées/sorties et saisissez les noms des topics dans les champs de commande et d’état. Laissez la passerelle KNX vide ; les champs DPT sont masqués car ils ne sont pas nécessaires. Utilisez des topics distincts pour les commandes et les états. La correspondance doit être exacte, sans caractères génériques.
 
-## Mode KNX
+## Intégration KNX facultative
 
-> **Vous pouvez aussi utiliser ce package avec KNX Ultimate.** L’intégration est native : installez `node-red-contrib-knx-ultimate` et sélectionnez sa passerelle pour activer le **Mode KNX**. Les mêmes champs utilisent alors des adresses de groupe et des DPT, avec des suggestions du projet ETS importé. Commandes et états passent directement par le bus ; aucun nœud Function intermédiaire n’est nécessaire pour ces correspondances.
+> **Vous pouvez aussi utiliser ce package avec KNX Ultimate.** Installez `node-red-contrib-knx-ultimate` et sélectionnez sa passerelle uniquement pour utiliser les adresses de groupe natives. Les mêmes champs emploient alors des adresses de groupe et des DPT, avec des suggestions du projet ETS importé. Commandes et états passent directement par le bus ; aucun nœud Function intermédiaire n’est nécessaire.
 
-| Réglage | Messages Node-RED | Mode KNX |
+| Réglage | Messages Node-RED | Intégration KNX facultative |
 | --- | --- | --- |
 | Passerelle KNX | Laisser vide | Sélectionner la passerelle existante |
 | Champs de correspondance | Topics exacts, ex. `living-room/on` | Adresses de groupe, ex. `1/1/1` |
 | DPT | Masqués ; non utilisés | Choisir le bon type de point de données |
 | Commandes et états | Avec `msg.topic` et `msg.payload` | Par le bus KNX |
 
-En sélectionnant une passerelle, remplacez les topics enregistrés par de vraies adresses de groupe et choisissez les DPT appropriés. Une passerelle sélectionnée mais hors ligne laisse le nœud en Mode KNX. Pour revenir aux messages Node-RED, retirez la passerelle et configurez à nouveau les topics.
+En sélectionnant une passerelle, remplacez les topics enregistrés par de vraies adresses de groupe et choisissez les DPT appropriés. Une passerelle sélectionnée mais hors ligne laisse l’intégration facultative active. Pour revenir aux messages Node-RED, retirez la passerelle et configurez à nouveau les topics.
 
 ## Migrer les flows existants
 

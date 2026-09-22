@@ -67,7 +67,7 @@
 
   function showCompletionMessage (RED, translate, convertedCount, windowObject, donationUrl) {
     if (!RED || typeof RED.notify !== 'function') return
-    const message = translate('migration_success', 'The flow backup download has started. Process finished. {{count}} legacy HUE nodes were converted. Inspect every modified node, including its function, configuration, pins and wiring, before clicking Deploy. If this conversion saved you time, you can support the continued development of KNX Ultimate with the optional button below.')
+    const message = translate('migration_success', 'The flow backup download has started. Process finished. {{count}} legacy HUE nodes were converted. Inspect every modified node, including its function, configuration, pins and wiring, before clicking Deploy. If this conversion saved you time, you can support the continued development of HUE Ultimate with the optional button below.')
       .replace('{{count}}', String(convertedCount))
     let notification
     try {
@@ -77,7 +77,7 @@
         type: 'success',
         buttons: [
           {
-            text: translate('migration_donate', 'Support KNX Ultimate ❤️'),
+            text: translate('migration_donate', 'Support HUE Ultimate ❤️'),
             class: 'hue-controller-migration-donate',
             click () {
               openDonationPage(RED, translate, windowObject, donationUrl)
@@ -136,7 +136,7 @@
       .css({ marginBottom: '10px', padding: '8px 10px', borderLeft: '4px solid #2980b9', background: '#eaf4fb' })
       .appendTo($dialog)
     $('<div class="hue-controller-migration-email"></div>')
-      .text(translate('migration_email_notice', 'After conversion, your email app will open an editable draft addressed to the author without navigating away from Node-RED. The draft contains only the number of converted nodes and space for optional notes; nothing is sent automatically. The final Node-RED message will offer an optional button to support KNX Ultimate.'))
+      .text(translate('migration_email_notice', 'After conversion, your email app will open an editable draft addressed to the author without navigating away from Node-RED. The draft contains only the number of converted nodes and space for optional notes; nothing is sent automatically. The final Node-RED message will offer an optional button to support HUE Ultimate.'))
       .css({ marginBottom: '10px' })
       .appendTo($dialog)
     $('<div class="form-tips hue-controller-migration-backup"></div>')
@@ -193,7 +193,7 @@
           }
           try {
             const mailto = migrationApi.createUsageMailto(convertedCount, {
-              subject: translate('migration_email_subject', 'KNX Ultimate - legacy HUE conversion used'),
+              subject: translate('migration_email_subject', 'HUE Ultimate - legacy HUE conversion used'),
               body: translate('migration_email_body', 'Hello Massimo,\n\nI used the legacy HUE node conversion button.\nConverted legacy HUE nodes: {{count}}.\n\nOptional notes:\n')
             })
             migrationApi.openUsageMailto(mailto, {

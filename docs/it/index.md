@@ -21,18 +21,18 @@ npm install node-red-contrib-hue-ultimate
 
 Abilita i pin di ingresso/uscita e inserisci i nomi dei topic nei campi di comando e stato. Lascia vuoto il gateway KNX; i campi DPT sono nascosti perché non servono. Usa topic distinti per comandi e stati. Il topic deve corrispondere esattamente: non sono supportati caratteri jolly.
 
-## Modalità KNX
+## Integrazione KNX opzionale
 
-> **Puoi usare il package anche con KNX Ultimate.** L’integrazione è nativa: installa `node-red-contrib-knx-ultimate` e seleziona il suo gateway per attivare la **Modalità KNX**. Gli stessi campi di mappatura usano quindi indirizzi di gruppo e DPT, con suggerimenti dal progetto ETS importato. Comandi e stati passano direttamente sul bus; per queste mappature non servono nodi Function intermedi.
+> **Puoi usare il package anche con KNX Ultimate.** Installa `node-red-contrib-knx-ultimate` e seleziona il suo gateway soltanto quando vuoi la mappatura nativa degli indirizzi di gruppo. Gli stessi campi usano quindi indirizzi di gruppo e DPT, con suggerimenti dal progetto ETS importato. Comandi e stati passano direttamente sul bus; non servono nodi Function intermedi.
 
-| Impostazione | Messaggi Node-RED | Modalità KNX |
+| Impostazione | Messaggi Node-RED | Integrazione KNX opzionale |
 | --- | --- | --- |
 | Gateway KNX | Lascia vuoto | Seleziona il gateway esistente |
 | Campi di mappatura | Topic esatti, es. `living-room/on` | Indirizzi di gruppo, es. `1/1/1` |
 | DPT | Nascosti; non utilizzati | Seleziona il datapoint corretto |
 | Comandi e stati | Tramite `msg.topic` e `msg.payload` | Attraverso il bus KNX |
 
-Quando selezioni un gateway, sostituisci i topic salvati con indirizzi di gruppo reali e scegli i DPT corretti. Un gateway selezionato ma offline mantiene il nodo in Modalità KNX. Per tornare ai messaggi Node-RED, svuota il gateway e configura nuovamente i topic.
+Quando selezioni un gateway, sostituisci i topic salvati con indirizzi di gruppo reali e scegli i DPT corretti. Un gateway selezionato ma offline mantiene attiva l’integrazione opzionale. Per tornare ai messaggi Node-RED, svuota il gateway e configura nuovamente i topic.
 
 ## Migrare i flow esistenti
 

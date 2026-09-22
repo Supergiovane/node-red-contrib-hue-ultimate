@@ -21,18 +21,18 @@ npm install node-red-contrib-hue-ultimate
 
 Aktiviere die Ein-/Ausgänge und trage Topic-Namen in die Befehls- und Statusfelder ein. Lass das KNX-Gateway leer; DPT-Felder bleiben ausgeblendet, da sie nicht benötigt werden. Verwende unterschiedliche Topics für Befehle und Status. Die Namen müssen exakt übereinstimmen; Platzhalter werden nicht unterstützt.
 
-## KNX-Modus
+## Optionale KNX-Integration
 
-> **Du kannst das Paket auch mit KNX Ultimate verwenden.** Die Integration ist nativ: Installiere `node-red-contrib-knx-ultimate` und wähle dessen Gateway, um den **KNX-Modus** zu aktivieren. Dieselben Zuordnungsfelder verwenden dann Gruppenadressen und DPTs mit Vorschlägen aus dem importierten ETS-Projekt. Befehle und Status werden direkt über den Bus übertragen; dafür sind keine zusätzlichen Function-Nodes nötig.
+> **Du kannst das Paket auch mit KNX Ultimate verwenden.** Installiere `node-red-contrib-knx-ultimate` und wähle dessen Gateway nur für eine native Gruppenadress-Zuordnung. Dieselben Felder verwenden dann Gruppenadressen und DPTs mit Vorschlägen aus dem importierten ETS-Projekt. Befehle und Status werden direkt über den Bus übertragen; zusätzliche Function-Nodes sind nicht nötig.
 
-| Einstellung | Node-RED-Nachrichten | KNX-Modus |
+| Einstellung | Node-RED-Nachrichten | Optionale KNX-Integration |
 | --- | --- | --- |
 | KNX-Gateway | Leer lassen | Vorhandenes Gateway auswählen |
 | Zuordnungsfelder | Exakte Topics, z. B. `living-room/on` | Gruppenadressen, z. B. `1/1/1` |
 | DPT | Ausgeblendet; nicht verwendet | Passenden Datenpunkttyp auswählen |
 | Befehle und Status | Über `msg.topic` und `msg.payload` | Über den KNX-Bus |
 
-Ersetze beim Auswählen eines Gateways die gespeicherten Topics durch echte Gruppenadressen und wähle die passenden DPTs. Ist das ausgewählte Gateway offline, bleibt der Node im KNX-Modus. Entferne die Gateway-Auswahl und konfiguriere die Topics erneut, um wieder Node-RED-Nachrichten zu verwenden.
+Ersetze beim Auswählen eines Gateways die gespeicherten Topics durch echte Gruppenadressen und wähle die passenden DPTs. Ist das ausgewählte Gateway offline, bleibt die optionale Integration aktiv. Entferne die Gateway-Auswahl und konfiguriere die Topics erneut, um wieder Node-RED-Nachrichten zu verwenden.
 
 ## Vorhandene Flows migrieren
 

@@ -21,18 +21,18 @@ npm install node-red-contrib-hue-ultimate
 
 Activa los pines de entrada/salida e introduce nombres de topics en los campos de comando y estado. Deja vacío el gateway KNX; los campos DPT se ocultan porque no son necesarios. Usa topics distintos para comandos y estados. La coincidencia debe ser exacta; no se admiten comodines.
 
-## Modo KNX
+## Integración KNX opcional
 
-> **También puedes usar este paquete con KNX Ultimate.** La integración es nativa: instala `node-red-contrib-knx-ultimate` y selecciona su gateway para activar el **Modo KNX**. Los mismos campos usan entonces direcciones de grupo y DPT, con sugerencias del proyecto ETS importado. Comandos y estados pasan directamente por el bus; no hacen falta nodos Function intermedios para estas asignaciones.
+> **También puedes usar este paquete con KNX Ultimate.** Instala `node-red-contrib-knx-ultimate` y selecciona su gateway solo cuando quieras el mapeo nativo de direcciones de grupo. Los mismos campos usan entonces direcciones de grupo y DPT, con sugerencias del proyecto ETS importado. Comandos y estados pasan directamente por el bus; no hacen falta nodos Function intermedios.
 
-| Ajuste | Mensajes Node-RED | Modo KNX |
+| Ajuste | Mensajes Node-RED | Integración KNX opcional |
 | --- | --- | --- |
 | Gateway KNX | Déjalo vacío | Selecciona el gateway existente |
 | Campos de asignación | Topics exactos, p. ej. `living-room/on` | Direcciones de grupo, p. ej. `1/1/1` |
 | DPT | Ocultos; no se utilizan | Selecciona el tipo de dato correcto |
 | Comandos y estados | Mediante `msg.topic` y `msg.payload` | Por el bus KNX |
 
-Al seleccionar un gateway, sustituye los topics guardados por direcciones de grupo reales y elige los DPT correctos. Si el gateway seleccionado está desconectado, el nodo permanece en Modo KNX. Para volver a los mensajes Node-RED, quita la selección del gateway y configura de nuevo los topics.
+Al seleccionar un gateway, sustituye los topics guardados por direcciones de grupo reales y elige los DPT correctos. Si el gateway seleccionado está desconectado, la integración opcional permanece activa. Para volver a los mensajes Node-RED, quita la selección del gateway y configura de nuevo los topics.
 
 ## Migrar flows existentes
 
