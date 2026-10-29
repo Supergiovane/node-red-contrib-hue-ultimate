@@ -577,6 +577,27 @@ describe('knxUltimateHueLight KNX to HUE routing', () => {
     expect(node.currentHUEDevice.dimming.brightness).to.equal(50)
   })
 
+  it('joins a queued grouped light switch-on instead of presetting the children', () => {
+    const { node, config, hueCommands, hueServer } = instantiateNode({
+      hueDevice: 'group-1#grouped_light',
+      GALightBrightness: '1/1/3',
+      dptLightBrightness: '5.001'
+    })
+
+    node.currentHUEDevice = { on: { on: false }, dimming: { brightness: 100 } }
+    const merged = []
+    hueServer.hueManager.mergeIntoPendingSwitchOn = (id, payload, command) => {
+      merged.push({ id, payload, command })
+      return true
+    }
+    hueServer.getAllLightsBelongingToTheGroup = async () => { throw new Error('children must not be preset') }
+
+    node.handleSend(createSwitchTelegram(config.GALightBrightness, Buffer.from([51])))
+
+    expect(merged).to.deep.equal([{ id: 'group-1', payload: { dimming: { brightness: 20 } }, command: 'setGroupedLight' }])
+    expect(hueCommands).to.have.lengthOf(0)
+  })
+
   it('forces Hue dimming off when brightness telegram is zero', () => {
     const { node, config, hueCommands } = instantiateNode({
       GALightBrightness: '1/1/3',

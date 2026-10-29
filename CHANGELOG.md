@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.4
+
+- Fixed lights briefly flashing at their previous brightness (e.g. 100%) before reaching the requested one: a switch-on and the brightness/color sent right after it now reach the bridge as a single Hue API v2 request. Pending commands for the same resource are merged, and a switch-on without brightness waits up to 300 ms for one to follow.
+
 ## 1.0.3
 
 - Fixed the HUE light editor capabilities request after the package split by serving and using the standalone namespaced admin endpoint.

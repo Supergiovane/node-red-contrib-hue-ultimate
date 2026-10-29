@@ -5,6 +5,32 @@ import { TextDecoder } from 'node:util'
 import { setTimeout as pleaseWait } from 'timers/promises'
 import * as http from './http.js'
 
+// Operations whose PUT body is a plain state patch. Pending patches for the same
+// resource are folded into one request, so the bridge never shows them as separate
+// visible steps (e.g. switch on at the last level, then dim to 20%).
+const MERGEABLE_OPERATIONS = new Set(['setLight', 'setGroupedLight', 'setPlug'])
+// A switch-on without brightness lets the lamp come up at its last level. It is held
+// briefly so a brightness/color sent right after it can join the same request.
+const HOLDABLE_OPERATIONS = new Set(['setLight', 'setGroupedLight'])
+
+const isPlainObject = (value) => value !== null && typeof value === 'object' && !Array.isArray(value)
+
+const isSameTarget = (a, b) => a._lightID === b._lightID && a._operation === b._operation && a._resourceType === b._resourceType
+
+const isBareSwitchOn = (state) => isPlainObject(state) && state.on?.on === true && state.dimming === undefined
+
+// Returns the combined patch, or null when the two must stay separate requests.
+const mergeStates = (pending, incoming) => {
+  if (!isPlainObject(pending) || !isPlainObject(incoming)) return null
+  // Opposite on/off commands (blink, pulse) must all reach the light, in order.
+  if (pending.on !== undefined && incoming.on !== undefined && pending.on?.on !== incoming.on?.on) return null
+  const merged = { ...pending, ...incoming }
+  // The bridge applies xy over mirek when both are present: the latest request must win.
+  if (incoming.color_temperature !== undefined && incoming.color === undefined) delete merged.color
+  if (incoming.color !== undefined && incoming.color_temperature === undefined) delete merged.color_temperature
+  return merged
+}
+
 const createAbortError = () => {
   const err = new Error('The operation was aborted')
   err.name = 'AbortError'
@@ -97,7 +123,7 @@ const openEventStream = (url, { headers = {}, agent, signal, connectTimeoutMs = 
 }
 
 class classHUE extends EventEmitter {
-  constructor (_hueBridgeIP, _username, _clientkey, _bridgeid, _sysLogger, { startQueue = true } = {}) {
+  constructor(_hueBridgeIP, _username, _clientkey, _bridgeid, _sysLogger, { startQueue = true } = {}) {
     super()
     this.HUEBridgeConnectionStatus = 'disconnected'
     this.exitAllQueues = false
@@ -110,6 +136,9 @@ class classHUE extends EventEmitter {
     this.timerCheckConnected = null
     this.restartSSECounter = 0
     this.queueMaxLength = 2000
+    this.switchOnHoldMs = 300 // How long a bare switch-on waits for a following brightness/color
+    this.queueSendIntervalMs = 150 // Pacing between bridge writes (Hue recommends max ~10 light commands/s)
+    this.queueIdlePollMs = 20
     this._logThrottle = new Map() // throttleKey -> { last: number, suppressed: number }
     if (startQueue) this.handleQueue()
     this.eventStreamAbort = null
@@ -205,6 +234,10 @@ class classHUE extends EventEmitter {
     if (!command) return false
     if (!Array.isArray(this.commandQueue)) this.commandQueue = []
 
+    if (this._mergeIntoPending(command)) return true
+    command._notBefore = HOLDABLE_OPERATIONS.has(command._operation) && isBareSwitchOn(command._state)
+      ? Date.now() + this.switchOnHoldMs
+      : 0
     this.commandQueue.unshift(command)
 
     if (this.commandQueue.length > this.queueMaxLength) {
@@ -213,6 +246,24 @@ class classHUE extends EventEmitter {
     }
 
     return true
+  }
+
+  // Folds a state patch into the newest not-yet-sent command for the same resource.
+  _mergeIntoPending = (command, acceptPending) => {
+    if (!MERGEABLE_OPERATIONS.has(command._operation)) return false
+    const pending = this.commandQueue.find((item) => isSameTarget(item, command)) // newest first
+    if (!pending || (acceptPending && !acceptPending(pending))) return false
+    const merged = mergeStates(pending._state, command._state)
+    if (merged === null) return false
+    pending._state = merged
+    return true
+  }
+
+  // Joins _state to a queued, not-yet-sent switch-on of the same resource. Returns false
+  // (and queues nothing) when there is no such command.
+  mergeIntoPendingSwitchOn = (_lightID, _state, _operation, _resourceType) => {
+    if (!Array.isArray(this.commandQueue)) return false
+    return this._mergeIntoPending({ _lightID, _state, _operation, _resourceType }, (pending) => pending._state?.on?.on === true)
   }
 
   Connect = async () => {
@@ -429,12 +480,19 @@ class classHUE extends EventEmitter {
 
   handleQueue = async () => {
     do {
+      let waitMs = this.queueIdlePollMs
       if (this.HUEBridgeConnectionStatus === 'connected' && this.commandQueue && this.commandQueue.length > 0) {
-        try {
-          await this.processQueueItem()
-        } catch (error) { }
+        const holdMs = (this.commandQueue[this.commandQueue.length - 1]._notBefore || 0) - Date.now()
+        if (holdMs > 0) {
+          waitMs = holdMs // Oldest command is a bare switch-on still collecting brightness/color
+        } else {
+          try {
+            await this.processQueueItem()
+          } catch (error) { }
+          waitMs = this.queueSendIntervalMs
+        }
       }
-      await pleaseWait(150)
+      await pleaseWait(waitMs)
     } while (!this.exitAllQueues)
   }
 

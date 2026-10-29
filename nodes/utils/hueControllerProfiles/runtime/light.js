@@ -176,6 +176,10 @@ module.exports = function (RED) {
         return
       }
 
+      // A switch-on for this group is still queued: join it, so the group turns on
+      // directly at the requested level instead of first showing the previous one.
+      if (node.serverHue.hueManager.mergeIntoPendingSwitchOn?.(node.hueDevice, _state, defaultOperation) === true) return
+
       (async () => {
         try {
           const groupLights = await node.serverHue.getAllLightsBelongingToTheGroup(node.hueDevice, false)
