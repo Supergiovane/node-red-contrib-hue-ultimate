@@ -1,0 +1,43 @@
+<script type="text/markdown" data-help-name="hueUltimateHealth">
+## HUE Health
+
+Vigila todos los dispositivos de un Hue Bridge y envía **un mensaje por cada aviso de dispositivo**: batería baja, problema de conectividad Zigbee o actualización de software.
+
+### Cuándo envía
+
+- Al iniciar: un mensaje por cada aviso actual (ninguno si todos los dispositivos están bien).
+- Cuando un aviso aparece o empeora (batería `low` → `critical`, actualización `update_pending` → `ready_to_install`). Un aviso resuelto, o un nivel de batería que cambia pero sigue bajo, no envía nada.
+- Cuando llega cualquier mensaje a la entrada: un mensaje por cada aviso actual.
+
+### Salida
+
+| Campo | Descripción |
+|--|--|
+| `msg.payload` | Texto con el nombre del dispositivo, la habitación y el tipo de aviso, separados por comas; para batería baja se añade al final el nivel en %. La habitación se omite si el dispositivo no está en ninguna. |
+| `msg.warning` | Tipo de aviso: `battery`, `zigbee_connectivity` o `software_update`. |
+| `msg.deviceName` | Nombre del dispositivo. |
+| `msg.deviceRoom` | Nombre de la habitación (vacío si el dispositivo no está en ninguna). |
+| `msg.lastUpdate` | Fecha y hora (ISO 8601) del último payload enviado para este dispositivo, es decir, este mensaje. |
+
+```json
+{
+  "topic": "Health",
+  "payload": "Hallway sensor, Hallway, battery, 12%",
+  "warning": "battery",
+  "deviceName": "Hallway sensor",
+  "deviceRoom": "Hallway",
+  "lastUpdate": "2026-10-29T08:15:42.120Z"
+}
+```
+
+Un dispositivo con dos avisos (por ejemplo batería baja y actualización de software) envía dos mensajes.
+
+### Propiedades
+
+| Propiedad | Descripción |
+|--|--|
+| Hue Bridge | El bridge que se vigila. |
+| Notificar baterías bajas | Una batería está baja cuando el bridge la indica como `low`/`critical`, o su nivel es igual o inferior al umbral. |
+| Notificar problemas de conectividad Zigbee | Cualquier estado distinto de `connected`. |
+| Notificar actualizaciones de software | Cualquier estado distinto de `no_update`. |
+</script>

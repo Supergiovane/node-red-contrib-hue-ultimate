@@ -1,0 +1,43 @@
+<script type="text/markdown" data-help-name="hueUltimateHealth">
+## HUE Health
+
+监视 Hue Bridge 的所有设备，并**为每个设备警告发送一条消息**：电池电量低、Zigbee 连接问题或软件更新。
+
+### 何时发送
+
+- 启动时：为每个当前警告发送一条消息（所有设备正常时不发送）。
+- 当警告出现或加重时（电池 `low` → `critical`，更新 `update_pending` → `ready_to_install`）。警告解除，或电池电量变化但仍处于低电量时，不发送。
+- 当任意消息到达输入时：为每个当前警告发送一条消息。
+
+### 输出
+
+| 字段 | 说明 |
+|--|--|
+| `msg.payload` | 以逗号分隔的文本，包含设备名称、房间和警告类型；电池电量低时在末尾追加以 % 表示的电量。设备不在任何房间时省略房间。 |
+| `msg.warning` | 警告类型：`battery`、`zigbee_connectivity` 或 `software_update`。 |
+| `msg.deviceName` | 设备名称。 |
+| `msg.deviceRoom` | 房间名称（设备不在任何房间时为空）。 |
+| `msg.lastUpdate` | 为该设备发送的最后一个 payload（即本条消息）的日期和时间（ISO 8601）。 |
+
+```json
+{
+  "topic": "Health",
+  "payload": "Hallway sensor, Hallway, battery, 12%",
+  "warning": "battery",
+  "deviceName": "Hallway sensor",
+  "deviceRoom": "Hallway",
+  "lastUpdate": "2026-10-29T08:15:42.120Z"
+}
+```
+
+有两个警告的设备（例如电池电量低和软件更新）会发送两条消息。
+
+### 属性
+
+| 属性 | 说明 |
+|--|--|
+| Hue Bridge | 要监视的 Bridge。 |
+| 报告电池电量低 | 当 Bridge 报告电池为 `low`/`critical`，或电量低于或等于阈值时，视为电量低。 |
+| 报告 Zigbee 连接问题 | 除 `connected` 之外的所有状态。 |
+| 报告软件更新 | 除 `no_update` 之外的所有状态。 |
+</script>

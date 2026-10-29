@@ -19,6 +19,10 @@ Beispiel: Ordne dem Helligkeitsbefehl `living-room/brightness` zu. Sende `msg.to
 
 Jede Instanz steht für eine ausgewählte Ressource. Nutze einen weiteren Controller für ein anderes Gerät oder um eine Instanz mit Node-RED-Nachrichten und eine andere mit der optionalen KNX-Integration zu betreiben.
 
+## HUE Health
+
+Überwacht alle Geräte der ausgewählten Hue Bridge und sendet pro Gerätewarnung eine Nachricht: schwache Batterie, Zigbee-Verbindungsproblem oder Software-Update. `msg.payload` ist ein durch Kommas getrennter Text mit Gerätename, Raum und Warnung (bei schwacher Batterie zusätzlich der Batteriestand in %); `msg.warning` ist der Warnungstyp; außerdem werden `msg.deviceName`, `msg.deviceRoom` und `msg.lastUpdate` gesetzt. Er sendet beim Start, wenn eine Warnung auftritt oder sich verschlechtert, und auf Anfrage über seinen Eingang.
+
 ## Nachrichten und Werte
 
 Ein/Aus verwendet `true` / `false`, Helligkeit eine Zahl von 0 bis 100 und Farbtemperatur Kelvin. Statusmeldungen enthalten das konfigurierte Topic und den Wert in `msg.payload`. Es können zusätzlich RAW-Ereignisse erscheinen; filtere nach `msg.topic`, wenn du nur zugeordnete Statusmeldungen brauchst.

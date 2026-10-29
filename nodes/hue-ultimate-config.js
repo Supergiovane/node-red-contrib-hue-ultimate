@@ -262,6 +262,14 @@ module.exports = (RED) => {
           node.hueAllRooms = node.hueAllResources.filter((a) => a.type === 'room')
           // Update all KNX State of the nodes with the new hue device values
           node.nodeClients.forEach((_node) => {
+            if (typeof _node.handleHueResourcesLoaded === 'function') {
+              try {
+                _node.handleHueResourcesLoaded(node.hueAllResources) // Read-only: the client must not mutate it
+              } catch (error) {
+                node.sysLogger?.warn(`KNXUltimateHue: loadResources handleHueResourcesLoaded error ${error.message}`)
+              }
+              return
+            }
             if (_node.hueDevice !== undefined && node.hueAllResources !== undefined) {
               const oHUEDevice = node.hueAllResources.filter((a) => a.id === _node.hueDevice)[0]
               if (oHUEDevice !== undefined) {
@@ -731,6 +739,20 @@ module.exports = (RED) => {
       // Update the node hue device, as soon as a node register itself to hue-ultimate-config nodeClients
       if (node.nodeClients.filter((x) => x.id === _Node.id).length !== 0) return
       node.nodeClients.push(_Node)
+
+      // Bridge-wide clients (e.g. HUE Health) receive the whole resource list, not one device.
+      if (typeof _Node.handleHueResourcesLoaded === 'function') {
+        if (Array.isArray(node.hueAllResources)) {
+          try {
+            _Node.handleHueResourcesLoaded(node.hueAllResources)
+          } catch (error) {
+            node.sysLogger?.warn(`KNXUltimateHue: addClient handleHueResourcesLoaded error ${error.message}`)
+          }
+        } else {
+          _Node.setNodeStatusHue({ fill: 'grey', shape: 'ring', text: 'Waiting for connection' })
+        }
+        return
+      }
 
       const applyHueSnapshot = (resource) => {
         if (!resource) return false

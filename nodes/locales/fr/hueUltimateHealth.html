@@ -1,0 +1,43 @@
+<script type="text/markdown" data-help-name="hueUltimateHealth">
+## HUE Health
+
+Surveille tous les appareils d'un Hue Bridge et envoie **un message par alerte d'appareil** : batterie faible, problème de connectivité Zigbee ou mise à jour logicielle.
+
+### Quand il envoie
+
+- Au démarrage : un message pour chaque alerte actuelle (aucun si tous les appareils vont bien).
+- Quand une alerte apparaît ou s'aggrave (batterie `low` → `critical`, mise à jour `update_pending` → `ready_to_install`). Une alerte résolue, ou un niveau de batterie qui change en restant faible, n'envoie rien.
+- Quand un message quelconque arrive en entrée : un message pour chaque alerte actuelle.
+
+### Sortie
+
+| Champ | Description |
+|--|--|
+| `msg.payload` | Texte avec le nom de l'appareil, la pièce et le type d'alerte, séparés par des virgules ; pour une batterie faible, le niveau en % est ajouté à la fin. La pièce est omise si l'appareil n'est dans aucune pièce. |
+| `msg.warning` | Type d'alerte : `battery`, `zigbee_connectivity` ou `software_update`. |
+| `msg.deviceName` | Nom de l'appareil. |
+| `msg.deviceRoom` | Nom de la pièce (vide si l'appareil n'est dans aucune pièce). |
+| `msg.lastUpdate` | Date et heure (ISO 8601) du dernier payload envoyé pour cet appareil, c'est-à-dire ce message. |
+
+```json
+{
+  "topic": "Health",
+  "payload": "Hallway sensor, Hallway, battery, 12%",
+  "warning": "battery",
+  "deviceName": "Hallway sensor",
+  "deviceRoom": "Hallway",
+  "lastUpdate": "2026-10-29T08:15:42.120Z"
+}
+```
+
+Un appareil avec deux alertes (par exemple batterie faible et mise à jour logicielle) envoie deux messages.
+
+### Propriétés
+
+| Propriété | Description |
+|--|--|
+| Hue Bridge | Le bridge à surveiller. |
+| Signaler les batteries faibles | Une batterie est faible quand le bridge l'indique `low`/`critical`, ou que son niveau est inférieur ou égal au seuil. |
+| Signaler les problèmes de connectivité Zigbee | Tout état autre que `connected`. |
+| Signaler les mises à jour logicielles | Tout état autre que `no_update`. |
+</script>

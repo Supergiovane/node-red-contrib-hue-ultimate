@@ -1,0 +1,43 @@
+<script type="text/markdown" data-help-name="hueUltimateHealth">
+## HUE Health
+
+Überwacht alle Geräte einer Hue Bridge und sendet **eine Nachricht pro Gerätewarnung**: schwache Batterie, Zigbee-Verbindungsproblem oder Software-Update.
+
+### Wann gesendet wird
+
+- Beim Start: eine Nachricht für jede aktuelle Warnung (keine, wenn alle Geräte in Ordnung sind).
+- Wenn eine Warnung auftritt oder sich verschlechtert (Batterie `low` → `critical`, Update `update_pending` → `ready_to_install`). Eine behobene Warnung oder ein Batteriestand, der sich ändert, aber schwach bleibt, sendet nichts.
+- Wenn eine beliebige Nachricht am Eingang ankommt: eine Nachricht für jede aktuelle Warnung.
+
+### Ausgabe
+
+| Feld | Beschreibung |
+|--|--|
+| `msg.payload` | Text mit Gerätename, Raum und Warnungstyp, durch Kommas getrennt; bei schwacher Batterie wird am Ende der Stand in % angehängt. Der Raum entfällt, wenn das Gerät keinem Raum zugeordnet ist. |
+| `msg.warning` | Warnungstyp: `battery`, `zigbee_connectivity` oder `software_update`. |
+| `msg.deviceName` | Gerätename. |
+| `msg.deviceRoom` | Raumname (leer, wenn das Gerät keinem Raum zugeordnet ist). |
+| `msg.lastUpdate` | Datum und Uhrzeit (ISO 8601) des letzten für dieses Gerät gesendeten Payloads, also dieser Nachricht. |
+
+```json
+{
+  "topic": "Health",
+  "payload": "Hallway sensor, Hallway, battery, 12%",
+  "warning": "battery",
+  "deviceName": "Hallway sensor",
+  "deviceRoom": "Hallway",
+  "lastUpdate": "2026-10-29T08:15:42.120Z"
+}
+```
+
+Ein Gerät mit zwei Warnungen (z. B. schwache Batterie und Software-Update) sendet zwei Nachrichten.
+
+### Eigenschaften
+
+| Eigenschaft | Beschreibung |
+|--|--|
+| Hue Bridge | Die zu überwachende Bridge. |
+| Schwache Batterien melden | Eine Batterie ist schwach, wenn die Bridge sie als `low`/`critical` meldet oder ihr Stand höchstens der Schwelle entspricht. |
+| Zigbee-Verbindungsprobleme melden | Jeder Zustand außer `connected`. |
+| Software-Updates melden | Jeder Zustand außer `no_update`. |
+</script>

@@ -19,6 +19,10 @@ Exemple : associez `living-room/brightness` à la commande de luminosité. Envoy
 
 Chaque instance représente une ressource sélectionnée. Ajoutez un autre Controller pour un autre appareil ou pour utiliser une instance avec les messages Node-RED et une autre avec l’intégration KNX facultative.
 
+## HUE Health
+
+Surveille tous les appareils du Hue Bridge sélectionné et envoie un message par alerte d’appareil : batterie faible, problème de connectivité Zigbee ou mise à jour logicielle. `msg.payload` est un texte avec le nom, la pièce et l’alerte de l’appareil séparés par des virgules (plus le niveau de batterie en % pour une batterie faible) ; `msg.warning` est le type d’alerte ; `msg.deviceName`, `msg.deviceRoom` et `msg.lastUpdate` sont aussi renseignés. Il envoie au démarrage, quand une alerte apparaît ou s’aggrave, et sur demande via son entrée.
+
 ## Messages et valeurs
 
 On/Off utilise `true` / `false`, la luminosité un nombre de 0 à 100 et la température de couleur des Kelvin. Les états utilisent le topic configuré et `msg.payload`. Des événements RAW peuvent aussi apparaître : filtrez sur `msg.topic` pour ne garder que les états mappés.

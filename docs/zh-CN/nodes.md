@@ -19,6 +19,10 @@ section: nodes
 
 每个实例对应一个所选资源。可添加另一个 Controller 控制其他设备，也可以让一个实例使用 Node-RED 消息，另一个使用可选 KNX 集成。
 
+## HUE Health
+
+监视所选 Hue Bridge 的所有设备，并为每个设备警告发送一条消息：电池电量低、Zigbee 连接问题或软件更新。`msg.payload` 是以逗号分隔的文本，包含设备名称、房间和警告（电池电量低时附带以 % 表示的电量）；`msg.warning` 为警告类型；同时设置 `msg.deviceName`、`msg.deviceRoom` 和 `msg.lastUpdate`。它在启动时、警告出现或加重时以及通过输入请求时发送。
+
 ## 消息与数值
 
 开关使用布尔值 `true` / `false`；亮度使用 0–100 的数字；色温使用开尔文。状态消息在 `msg.topic` 中包含配置的 topic，在 `msg.payload` 中包含值。还可能输出 RAW 事件；如只需要映射状态，请按 `msg.topic` 筛选。

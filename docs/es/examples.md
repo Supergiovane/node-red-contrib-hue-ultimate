@@ -38,3 +38,5 @@ Conecta una luz real directamente a las direcciones KNX de comando y estado. Sel
 La carpeta examples también contiene flows por dispositivo. Lee sus nodos Comment antes de Deploy.
 
 [Hue Button - Short and Dim Commands.json]({{ "/examples/Hue%20Button%20-%20Short%20and%20Dim%20Commands.json" | relative_url }})
+
+[Hue Health - Device Problems.json]({{ "/examples/Hue%20Health%20-%20Device%20Problems.json" | relative_url }})

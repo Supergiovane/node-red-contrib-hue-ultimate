@@ -1,0 +1,43 @@
+<script type="text/markdown" data-help-name="hueUltimateHealth">
+## HUE Health
+
+Controlla tutti i dispositivi di un Hue Bridge e invia **un messaggio per ogni warning di ciascun dispositivo**: batteria scarica, problema di connettività Zigbee o aggiornamento software.
+
+### Quando invia
+
+- All'avvio: un messaggio per ogni warning attuale (nessuno se tutti i dispositivi sono a posto).
+- Quando un warning compare o peggiora (batteria `low` → `critical`, aggiornamento `update_pending` → `ready_to_install`). Un warning risolto, o un livello di batteria che cambia restando basso, non invia nulla.
+- Quando arriva un messaggio qualsiasi all'ingresso: un messaggio per ogni warning attuale.
+
+### Uscita
+
+| Campo | Descrizione |
+|--|--|
+| `msg.payload` | Testo con nome del dispositivo, stanza e tipo di warning, separati da una virgola; per la batteria scarica si aggiunge in fondo il livello in %. La stanza viene omessa se il dispositivo non è in una stanza. |
+| `msg.warning` | Tipo di warning: `battery`, `zigbee_connectivity` o `software_update`. |
+| `msg.deviceName` | Nome del dispositivo. |
+| `msg.deviceRoom` | Nome della stanza (vuoto se il dispositivo non è in una stanza). |
+| `msg.lastUpdate` | Data e ora (ISO 8601) dell'ultimo payload emesso per questo dispositivo, cioè questo messaggio. |
+
+```json
+{
+  "topic": "Health",
+  "payload": "Hallway sensor, Hallway, battery, 12%",
+  "warning": "battery",
+  "deviceName": "Hallway sensor",
+  "deviceRoom": "Hallway",
+  "lastUpdate": "2026-10-29T08:15:42.120Z"
+}
+```
+
+Un dispositivo con due warning (per esempio batteria scarica e aggiornamento software) invia due messaggi.
+
+### Proprietà
+
+| Proprietà | Descrizione |
+|--|--|
+| Hue Bridge | Il bridge da controllare. |
+| Segnala batterie scariche | Una batteria è scarica quando il bridge la riporta come `low`/`critical`, o il suo livello è pari o inferiore alla soglia. |
+| Segnala problemi di connettività Zigbee | Ogni stato diverso da `connected`. |
+| Segnala aggiornamenti software | Ogni stato diverso da `no_update`. |
+</script>

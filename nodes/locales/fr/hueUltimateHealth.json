@@ -1,0 +1,11 @@
+{
+  "hueUltimateHealth": {
+    "hue_bridge": "Hue Bridge",
+    "name": "Nom",
+    "monitor_battery": "Signaler les batteries faibles",
+    "battery_threshold": "Batterie faible à partir de",
+    "monitor_connectivity": "Signaler les problèmes de connectivité Zigbee",
+    "monitor_software_update": "Signaler les mises à jour logicielles",
+    "tip": "Le nœud surveille tous les appareils du Hue Bridge sélectionné et envoie un message par alerte d'appareil : au démarrage, quand une alerte apparaît ou s'aggrave, et quand un message quelconque arrive en entrée."
+  }
+}

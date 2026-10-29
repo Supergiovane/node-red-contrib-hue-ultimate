@@ -1,0 +1,81 @@
+[
+  {
+    "id": "h_tab_hueUltimateHealth",
+    "type": "tab",
+    "label": "HUE Health",
+    "disabled": false,
+    "info": ""
+  },
+  {
+    "id": "h_hue",
+    "type": "hue-ultimate-config",
+    "z": "",
+    "host": "192.168.1.10",
+    "name": "Hue Bridge",
+    "bridgeid": ""
+  },
+  {
+    "id": "h_c_hueUltimateHealth",
+    "type": "comment",
+    "z": "h_tab_hueUltimateHealth",
+    "name": "HUE Health example (select your Hue Bridge): one message per device warning. Click Inject to get the current warnings.",
+    "info": "",
+    "x": 430,
+    "y": 60,
+    "wires": []
+  },
+  {
+    "id": "h_inj_hueUltimateHealth",
+    "type": "inject",
+    "z": "h_tab_hueUltimateHealth",
+    "name": "Check now",
+    "props": [],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "topic": "",
+    "x": 190,
+    "y": 140,
+    "wires": [
+      [
+        "h_node_hueUltimateHealth"
+      ]
+    ]
+  },
+  {
+    "id": "h_node_hueUltimateHealth",
+    "type": "hueUltimateHealth",
+    "z": "h_tab_hueUltimateHealth",
+    "name": "Device health",
+    "serverHue": "h_hue",
+    "monitorBattery": true,
+    "batteryThreshold": 20,
+    "monitorConnectivity": true,
+    "monitorSoftwareUpdate": true,
+    "x": 400,
+    "y": 140,
+    "wires": [
+      [
+        "h_dbg_hueUltimateHealth"
+      ]
+    ]
+  },
+  {
+    "id": "h_dbg_hueUltimateHealth",
+    "type": "debug",
+    "z": "h_tab_hueUltimateHealth",
+    "name": "Device warning",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "true",
+    "targetType": "msg",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 610,
+    "y": 140,
+    "wires": []
+  }
+]

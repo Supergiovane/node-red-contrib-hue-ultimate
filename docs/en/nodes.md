@@ -19,6 +19,10 @@ For example: map brightness command to `living-room/brightness`. Send `msg.topic
 
 One node instance represents one selected resource. Add another Controller for another device or to use one instance with Node-RED messages and another with the optional KNX integration.
 
+## HUE Health
+
+Watches every device of the selected Hue Bridge and sends one message per device warning: low battery, Zigbee connectivity problem or software update. `msg.payload` is a comma-separated text with the device name, room and warning (plus the battery level in % for a low battery); `msg.warning` is the warning type; `msg.deviceName`, `msg.deviceRoom` and `msg.lastUpdate` are also set. It sends at startup, when a warning starts or gets worse, and on request through its input.
+
 ## Messages and values
 
 On/off uses boolean `true` / `false`; brightness uses a number from 0 to 100. Color temperature uses Kelvin. State mappings publish the configured topic with the value in `msg.payload`. RAW events may also appear: filter by `msg.topic` when you only want mapped states.

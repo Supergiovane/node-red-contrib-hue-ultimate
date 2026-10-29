@@ -1,0 +1,11 @@
+{
+  "hueUltimateHealth": {
+    "hue_bridge": "Hue Bridge",
+    "name": "Name",
+    "monitor_battery": "Schwache Batterien melden",
+    "battery_threshold": "Batterie schwach bei höchstens",
+    "monitor_connectivity": "Zigbee-Verbindungsprobleme melden",
+    "monitor_software_update": "Software-Updates melden",
+    "tip": "Der Node überwacht alle Geräte der ausgewählten Hue Bridge und sendet pro Gerätewarnung eine Nachricht: beim Start, wenn eine Warnung auftritt oder sich verschlechtert, und wenn eine beliebige Nachricht am Eingang ankommt."
+  }
+}

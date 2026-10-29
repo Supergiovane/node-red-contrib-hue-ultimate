@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.5
+
+- Added the **HUE Health** node: it watches every device of a Hue Bridge and sends one message per device warning (low battery, Zigbee connectivity problem or software update). `msg.payload` is a comma-separated text with the device name, room, warning and, for a low battery, the level in %; `msg.warning`, `msg.deviceName`, `msg.deviceRoom` and `msg.lastUpdate` are also set. It sends at startup, when a warning starts or gets worse, and on request through its input. Help and documentation in all six languages, plus an example flow.
+
 ## 1.0.4
 
 - Fixed lights briefly flashing at their previous brightness (e.g. 100%) before reaching the requested one: a switch-on and the brightness/color sent right after it now reach the bridge as a single Hue API v2 request. Pending commands for the same resource are merged, and a switch-on without brightness waits up to 300 ms for one to follow.

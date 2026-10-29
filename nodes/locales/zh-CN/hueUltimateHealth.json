@@ -1,0 +1,11 @@
+{
+  "hueUltimateHealth": {
+    "hue_bridge": "Hue Bridge",
+    "name": "名称",
+    "monitor_battery": "报告电池电量低",
+    "battery_threshold": "电池电量低于或等于",
+    "monitor_connectivity": "报告 Zigbee 连接问题",
+    "monitor_software_update": "报告软件更新",
+    "tip": "该节点监视所选 Hue Bridge 的所有设备，并为每个设备警告发送一条消息：启动时、警告出现或加重时，以及任意消息到达输入时。"
+  }
+}

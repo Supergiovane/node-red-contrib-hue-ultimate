@@ -19,6 +19,10 @@ Ejemplo: asigna `living-room/brightness` al comando de brillo. Envía `msg.topic
 
 Cada instancia representa un recurso seleccionado. Añade otro Controller para otro dispositivo o para usar una instancia con mensajes Node-RED y otra con la integración KNX opcional.
 
+## HUE Health
+
+Vigila todos los dispositivos del Hue Bridge seleccionado y envía un mensaje por cada aviso de dispositivo: batería baja, problema de conectividad Zigbee o actualización de software. `msg.payload` es un texto con el nombre, la habitación y el aviso del dispositivo separados por comas (más el nivel de batería en % para batería baja); `msg.warning` es el tipo de aviso; también se establecen `msg.deviceName`, `msg.deviceRoom` y `msg.lastUpdate`. Envía al iniciar, cuando un aviso aparece o empeora, y a petición a través de su entrada.
+
 ## Mensajes y valores
 
 On/Off usa `true` / `false`, el brillo un número de 0 a 100 y la temperatura de color Kelvin. Los estados usan el topic configurado y `msg.payload`. También pueden aparecer eventos RAW: filtra por `msg.topic` para recibir solo los estados asignados.

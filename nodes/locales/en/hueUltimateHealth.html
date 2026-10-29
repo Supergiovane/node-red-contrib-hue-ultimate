@@ -1,0 +1,43 @@
+<script type="text/markdown" data-help-name="hueUltimateHealth">
+## HUE Health
+
+Watches every device of a Hue Bridge and sends **one message per device warning**: low battery, Zigbee connectivity problem or software update.
+
+### When it sends
+
+- At startup: one message for every current warning (nothing if every device is fine).
+- When a warning starts or gets worse (battery `low` → `critical`, update `update_pending` → `ready_to_install`). A solved warning, or a battery level that changes while it stays low, sends nothing.
+- When any message reaches the input: one message for every current warning.
+
+### Output
+
+| Field | Description |
+|--|--|
+| `msg.payload` | Text with the device name, room and warning type, separated by commas; for a low battery, the level in % is added at the end. The room is left out when the device is not in a room. |
+| `msg.warning` | Warning type: `battery`, `zigbee_connectivity` or `software_update`. |
+| `msg.deviceName` | Device name. |
+| `msg.deviceRoom` | Room name (empty if the device is not in a room). |
+| `msg.lastUpdate` | Date and time (ISO 8601) of the last payload sent for this device, that is this message. |
+
+```json
+{
+  "topic": "Health",
+  "payload": "Hallway sensor, Hallway, battery, 12%",
+  "warning": "battery",
+  "deviceName": "Hallway sensor",
+  "deviceRoom": "Hallway",
+  "lastUpdate": "2026-10-29T08:15:42.120Z"
+}
+```
+
+A device with two warnings (for example low battery and a software update) sends two messages.
+
+### Properties
+
+| Property | Description |
+|--|--|
+| Hue Bridge | The bridge to watch. |
+| Report low batteries | A battery is low when the bridge reports it as `low`/`critical`, or its level is at or below the threshold. |
+| Report Zigbee connectivity problems | Every state other than `connected`. |
+| Report software updates | Every state other than `no_update`. |
+</script>

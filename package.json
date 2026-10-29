@@ -9,11 +9,13 @@
   },
   "license": "MIT",
   "name": "node-red-contrib-hue-ultimate",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Philips Hue integration for Node-RED: control lights, scenes and sensors with messages, with optional native KNX Ultimate mapping.",
   "files": [
     "nodes/hueUltimateController.js",
     "nodes/hueUltimateController.html",
+    "nodes/hueUltimateHealth.js",
+    "nodes/hueUltimateHealth.html",
     "nodes/hue-ultimate-config.js",
     "nodes/hue-ultimate-config.html",
     "nodes/hueUltimate-admin.js",
@@ -21,6 +23,7 @@
     "nodes/utils/",
     "nodes/icons/",
     "nodes/locales/*/hueUltimateController.*",
+    "nodes/locales/*/hueUltimateHealth.*",
     "nodes/locales/*/hue-ultimate-config.*",
     "resources/",
     "examples/",
@@ -58,6 +61,7 @@
     },
     "nodes": {
       "hueUltimateController": "/nodes/hueUltimateController.js",
+      "hueUltimateHealth": "/nodes/hueUltimateHealth.js",
       "hue-ultimate-config": "/nodes/hue-ultimate-config.js"
     }
   },

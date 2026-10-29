@@ -57,11 +57,11 @@ describe('Unified HUE Controller', () => {
     'device_software_update'
   ]
 
-  it('registers only the standalone controller and bridge configuration', () => {
+  it('registers only the standalone controller, HUE Health and bridge configuration', () => {
     const pkg = require('../package.json')
     const nodeKeys = Object.keys(pkg['node-red'].nodes)
     expect(nodeKeys).to.include('hueUltimateController')
-    expect(nodeKeys).to.have.members(['hueUltimateController', 'hue-ultimate-config'])
+    expect(nodeKeys).to.have.members(['hueUltimateController', 'hueUltimateHealth', 'hue-ultimate-config'])
 
     let registration
     require('../nodes/hueUltimateController')({

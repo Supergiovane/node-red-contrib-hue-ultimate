@@ -1,0 +1,11 @@
+{
+  "hueUltimateHealth": {
+    "hue_bridge": "Hue Bridge",
+    "name": "Nombre",
+    "monitor_battery": "Notificar baterías bajas",
+    "battery_threshold": "Batería baja igual o inferior a",
+    "monitor_connectivity": "Notificar problemas de conectividad Zigbee",
+    "monitor_software_update": "Notificar actualizaciones de software",
+    "tip": "El nodo vigila todos los dispositivos del Hue Bridge seleccionado y envía un mensaje por cada aviso de dispositivo: al iniciar, cuando un aviso aparece o empeora, y cuando llega cualquier mensaje a la entrada."
+  }
+}

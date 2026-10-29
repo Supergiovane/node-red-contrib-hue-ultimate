@@ -14,6 +14,8 @@ The package does not require KNX. Enable the node pins, use `msg.topic` for the 
 
 One multimode **HUE Controller** handles lights, groups, plugs, scenes, buttons and sensors. Choose a Hue resource and the node shows its supported functions. Controllers share a Hue Bridge configuration.
 
+**HUE Health** watches the whole bridge and reports the devices with a low battery, a Zigbee connectivity problem or a software update.
+
 <br/>
 
 [![NPM version][npm-version-image]][npm-url] [![Node.js version][node-version-image]][npm-url] [![Node-RED Flow Library][flows-image]][flows-url] [![Docs][docs-image]][docs-url] [![Commit activity][commit-activity-image]][commit-activity-url] [![Last commit][last-commit-image]][last-commit-url] [![NPM downloads per month][npm-downloads-month-image]][npm-url] [![NPM downloads in the last 18 months][npm-downloads-18-months-image]][npm-url] [![MIT License][license-image]][license-url] [![JavaScript Style Guide][standard-image]][standard-url] [![YouTube][youtube-image]][youtube-url]

@@ -1,0 +1,75 @@
+<script type="text/javascript">
+  RED.nodes.registerType('hueUltimateHealth', {
+    category: 'HUE Ultimate',
+    color: '#F2CE72',
+    defaults: {
+      name: { value: '' },
+      serverHue: { value: '', type: 'hue-ultimate-config', required: true },
+      monitorBattery: { value: true },
+      batteryThreshold: { value: 20, required: true, validate: function (v) { const n = Number(v); return v !== '' && Number.isFinite(n) && n >= 0 && n <= 100 } },
+      monitorConnectivity: { value: true },
+      monitorSoftwareUpdate: { value: true }
+    },
+    inputs: 1,
+    outputs: 1,
+    icon: 'node-hue-icon.svg',
+    label: function () {
+      return this.name || 'HUE Health'
+    },
+    paletteLabel: 'HUE Health',
+    oneditprepare: function () {
+      try { RED.sidebar.show('help') } catch (error) { /* empty */ }
+      const toggleThreshold = function () {
+        $('#hue-health-battery-threshold-row').toggle($('#node-input-monitorBattery').is(':checked'))
+      }
+      $('#node-input-monitorBattery').on('change', toggleThreshold)
+      toggleThreshold()
+      $('#node-input-batteryThreshold').spinner({ min: 0, max: 100 })
+    }
+  })
+</script>
+
+<script type="text/html" data-template-name="hueUltimateHealth">
+  <div class="form-row">
+    <label for="node-input-serverHue">
+      <i class="fa fa-circle"></i>
+      <span data-i18n="hueUltimateHealth.hue_bridge"></span>
+    </label>
+    <input type="text" id="node-input-serverHue">
+  </div>
+  <div class="form-row">
+    <label for="node-input-name">
+      <i class="fa fa-tag"></i>
+      <span data-i18n="hueUltimateHealth.name"></span>
+    </label>
+    <input type="text" id="node-input-name" data-i18n="[placeholder]hueUltimateHealth.name">
+  </div>
+  <div class="form-row">
+    <label style="width:auto;" for="node-input-monitorBattery">
+      <input type="checkbox" id="node-input-monitorBattery" style="display:inline-block; width:auto; vertical-align:top;">
+      <i class="fa fa-battery-quarter"></i>
+      <span data-i18n="hueUltimateHealth.monitor_battery"></span>
+    </label>
+  </div>
+  <div class="form-row" id="hue-health-battery-threshold-row" style="padding-left:24px;">
+    <label for="node-input-batteryThreshold" style="width:auto;">
+      <span data-i18n="hueUltimateHealth.battery_threshold"></span>
+    </label>
+    <input type="text" id="node-input-batteryThreshold" style="width:70px;"> %
+  </div>
+  <div class="form-row">
+    <label style="width:auto;" for="node-input-monitorConnectivity">
+      <input type="checkbox" id="node-input-monitorConnectivity" style="display:inline-block; width:auto; vertical-align:top;">
+      <i class="fa fa-wifi"></i>
+      <span data-i18n="hueUltimateHealth.monitor_connectivity"></span>
+    </label>
+  </div>
+  <div class="form-row">
+    <label style="width:auto;" for="node-input-monitorSoftwareUpdate">
+      <input type="checkbox" id="node-input-monitorSoftwareUpdate" style="display:inline-block; width:auto; vertical-align:top;">
+      <i class="fa fa-download"></i>
+      <span data-i18n="hueUltimateHealth.monitor_software_update"></span>
+    </label>
+  </div>
+  <div class="form-tips" data-i18n="hueUltimateHealth.tip"></div>
+</script>
