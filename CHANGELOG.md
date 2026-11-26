@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- **Cerebrum Ultimate:** every Hue Bridge configuration publishes its lights, room and zone groups, sensors, batteries, connectivity and button presses to Cerebrum Ultimate, read-only, when Cerebrum is installed in the same Node-RED. Cerebrum can use them in chat, history and JavaScript routines, and MCP clients can read them through the Cerebrum MCP server. No configuration is needed; nothing can be commanded through this link. See the [Cerebrum Ultimate documentation](https://www.maxsupervibe.com/docs/cerebrum-ultimate/).
+
 ## 1.0.5
 
 - Added the **HUE Health** node: it watches every device of a Hue Bridge and sends one message per device warning (low battery, Zigbee connectivity problem or software update). `msg.payload` is a comma-separated text with the device name, room, warning and, for a low battery, the level in %; `msg.warning`, `msg.deviceName`, `msg.deviceRoom` and `msg.lastUpdate` are also set. It sends at startup, when a warning starts or gets worse, and on request through its input. Help and documentation in all six languages, plus an example flow.

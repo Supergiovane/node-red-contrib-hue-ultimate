@@ -12,6 +12,7 @@ const {
 } = require('./utils/hueControllerResourceCatalog')
 // const classHUE = require("./utils/hueEngine").classHUE;
 const hueColorConverter = require('./utils/colorManipulators/hueColorConverter')
+const { createHueCerebrumIntegration } = require('./utils/hueCerebrumProvider')
 
 module.exports = (RED) => {
   function hueConfig (config) {
@@ -29,6 +30,9 @@ module.exports = (RED) => {
       node.sysLogger = new LoggerClass({ loglevel: node.loglevel, setPrefix: 'hue-ultimate-config.js' })
     } catch (error) { console.log(error.stack) }
     node.name = config.name === undefined || config.name === '' ? node.host : config.name
+    // Read-only publication of this bridge's devices to Cerebrum Ultimate (optional).
+    node.cerebrumIntegration = null
+    try { node.cerebrumIntegration = createHueCerebrumIntegration({ configNode: node }) } catch (error) { node.sysLogger?.warn(`Cerebrum integration unavailable: ${error.message}`) }
 
     // Helper not to write everytime the "node.hueManager === null || node.hueManager === "undefined" || node.hueManager.HUEBridgeConnectionStatus === undefined"
     Object.defineProperty(node, 'linkStatus', {
@@ -173,6 +177,7 @@ module.exports = (RED) => {
           throw (error)
         }
         node.hueManager.on('event', (_event) => {
+          try { node.cerebrumIntegration?.handleHueEvent(_event) } catch (error) { /* Cerebrum must never break Hue */ }
           node.nodeClients.forEach((_oClient) => {
             const oClient = _oClient
             try {
@@ -838,6 +843,8 @@ module.exports = (RED) => {
     }
 
     node.on('close', (done) => {
+      try { node.cerebrumIntegration?.dispose() } catch (error) { /* ignore */ }
+      node.cerebrumIntegration = null
       try {
         node.sysLogger?.destroy()
         node.sysLogger = null

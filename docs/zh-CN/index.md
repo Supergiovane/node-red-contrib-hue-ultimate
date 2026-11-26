@@ -39,3 +39,7 @@ npm install node-red-contrib-hue-ultimate
 先备份完整的 Node-RED 用户目录。保留 **KNX Ultimate 7**，安装新包并重启。选择 **Back up and convert**，检查流程并点击 **Deploy**，然后再升级到 KNX Ultimate 8。节点 ID、连线和配置引用会保留。下载的 JSON 不包含受保护的凭据。
 
 旧版独立 Hue 节点和多模式 Controller 均可转换。对应功能会保留，共用的 Hue Bridge 配置也会转换。
+
+## Cerebrum Ultimate
+
+如果同一个 Node-RED 中安装了 **Cerebrum Ultimate**，每个 Hue Bridge 配置都会自动以只读方式发布给它：每个房间和区域的灯及灯组（开/关、亮度）、运动、温度、照度、湿度和门磁传感器、电池电量、Zigbee 连接状态和按键事件，并附带所在房间。Cerebrum 可以在聊天、历史记录中使用它们，并作为 JavaScript 例程的触发条件；Claude 等 MCP 客户端可以通过 Cerebrum 的 MCP 服务器读取它们。无需任何配置，Cerebrum 也无法通过此连接控制或更改任何内容。未安装 Cerebrum 时一切照旧。参见 [Cerebrum Ultimate 文档](https://www.maxsupervibe.com/docs/cerebrum-ultimate/)。

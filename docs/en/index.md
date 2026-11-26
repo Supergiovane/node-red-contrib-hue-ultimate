@@ -39,3 +39,7 @@ When selecting a gateway, replace the saved topics with real group addresses and
 Back up the entire Node-RED user directory. Keep **KNX Ultimate 7** installed, add the new package and restart. Choose **Back up and convert**, review the flow and **Deploy** before upgrading KNX Ultimate to 8. IDs, connections and configuration references are preserved. The downloaded flow JSON does not contain protected credentials.
 
 Both old individual Hue nodes and the old multimode Controller are converted to HUE Controller. The matching function is retained; the shared Hue Bridge configuration is converted too.
+
+## Cerebrum Ultimate
+
+When **Cerebrum Ultimate** is installed in the same Node-RED, every Hue Bridge configuration is published to it automatically, read-only: lights and light groups of every room and zone (on/off, brightness), motion, temperature, illuminance, humidity and contact sensors, battery levels, Zigbee connectivity and button presses, with their room. Cerebrum can use them in chat, in its history and as triggers of JavaScript routines, and MCP clients such as Claude can read them through the Cerebrum MCP server. Nothing has to be configured, and nothing can be switched or changed from Cerebrum through this link. Without Cerebrum nothing changes. See the [Cerebrum Ultimate documentation](https://www.maxsupervibe.com/docs/cerebrum-ultimate/).
