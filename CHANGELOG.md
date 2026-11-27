@@ -1,8 +1,9 @@
 # Changelog
 
-## Unreleased
+## 1.0.6
 
 - **Cerebrum Ultimate:** every Hue Bridge configuration publishes its lights, room and zone groups, sensors, batteries, connectivity and button presses to Cerebrum Ultimate, read-only, when Cerebrum is installed in the same Node-RED. Cerebrum can use them in chat, history and JavaScript routines, and MCP clients can read them through the Cerebrum MCP server. No configuration is needed; nothing can be commanded through this link. See the [Cerebrum Ultimate documentation](https://www.maxsupervibe.com/docs/cerebrum-ultimate/).
+- **Documentation:** README and documentation links now point to www.maxsupervibe.com.
 
 ## 1.0.5
 
